@@ -18,7 +18,6 @@ select * from stage_dim_Users
 ----------------------------------------------------
 create table stage_dim_PlantProfile (
 Profile_ID int null,
-[User_ID] varchar(50) null ,
 Profile_Name varchar(50) null,
 CO2_Max decimal null,
 CO2_Min decimal null,
@@ -30,8 +29,8 @@ Light_Max decimal null,
 Light_Min decimal null
 )
 
-insert into stage_dim_PlantProfile (Profile_ID, [User_ID], Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max , Light_Min)
-select                            Profile_ID, [User_ID], Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max ,Light_Min 
+insert into stage_dim_PlantProfile (Profile_ID, Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max , Light_Min)
+select                            Profile_ID, Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max ,Light_Min
 from SEP4_PMI.dbo.PlantProfile
 
 --drop table if exists stage_dim_PlantProfile
@@ -39,12 +38,11 @@ select * from stage_dim_PlantProfile
 ---------------------------------------------------------------
 create table stage_dim_Plant (
 Plant_ID int null,
-Profile_ID int null,
 Plant_Name varchar(50) null
 )
 
-insert into stage_dim_Plant (Plant_ID, Profile_ID, Plant_Name)
-select Plant_ID, Profile_ID, PlantName 
+insert into stage_dim_Plant (Plant_ID, Plant_Name)
+select Plant_ID, PlantName
 from SEP4_PMI.dbo.Plant
 
 
