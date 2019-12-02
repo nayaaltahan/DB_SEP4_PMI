@@ -2,23 +2,23 @@ create database Stage_SEP4_PMI
 
 use Stage_SEP4_PMI 
 
-drop table if exists Stage_Users
+--drop table if exists stage_dim_Users
 
 ----Extracting user data from source 
 
-create table Stage_Users (
-S_User_ID varchar(50) not null primary key,
-[Password] varchar (50) not null
+create table stage_dim_Users (
+User_ID varchar(50) NULL ,
+[Password] varchar (50) NULL
 )
-insert into Stage_Users(S_User_ID, [Password]) 
+insert into stage_dim_Users(User_ID, [Password])
 select [User_ID], [Password] from SEP4_PMI.dbo.Users
 
-select * from Stage_Users 
+select * from stage_dim_Users
 
 ----------------------------------------------------
-create table Stage_PlantProfile (
-S_Profile_ID int not null primary key,
-[User_ID] varchar(50) not null ,
+create table stage_dim_PlantProfile (
+Profile_ID int null,
+[User_ID] varchar(50) null ,
 Profile_Name varchar(50) null,
 CO2_Max decimal null,
 CO2_Min decimal null,
@@ -29,117 +29,126 @@ Tem_Min decimal null,
 Light_Max decimal null,
 Light_Min decimal null
 )
-insert into Stage_PlantProfile (S_Profile_ID, [User_ID], Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max ,Light_Min)
+
+insert into stage_dim_PlantProfile (Profile_ID, [User_ID], Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max , Light_Min)
 select                            Profile_ID, [User_ID], Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max ,Light_Min 
 from SEP4_PMI.dbo.PlantProfile
 
-drop table if exists Stage_PlantProfile
-select * from Stage_PlantProfile
+--drop table if exists stage_dim_PlantProfile
+select * from stage_dim_PlantProfile
 ---------------------------------------------------------------
-create table Stage_Plant (
-Plant_ID int not null primary key,
-Profile_ID int not null,
-PlantName varchar(50) null
+create table stage_dim_Plant (
+Plant_ID int null,
+Profile_ID int null,
+Plant_Name varchar(50) null
 )
 
-insert into Stage_Plant (Plant_ID, Profile_ID, PlantName)
+insert into stage_dim_Plant (Plant_ID, Profile_ID, Plant_Name)
 select Plant_ID, Profile_ID, PlantName 
 from SEP4_PMI.dbo.Plant
 
 
-select * from Stage_Plant
+select * from stage_dim_Plant
 -----------------------------------------------------------------
-drop table if exists Stage_PlantInfo
+drop table if exists stage_dim_PlantData
 
-create table Stage_PlantInfo (
-S_Info_ID int not null primary key,
-Plant_ID int not null,
-Sensor_Type varchar (50) null,
-Sensor_Value decimal (6,3) not null,
-[TimeStamp] DateTime not null
-   
-)
 
-insert into Stage_PlantInfo(S_Info_ID, Plant_ID,Sensor_Type, Sensor_Value, [Timestamp])
+
+insert into stage_dim_PlantData(S_Info_ID, Plant_ID,Sensor_Type, Sensor_Value, [Timestamp])
 select Info_ID, Plant_ID, Sensor_Type, Sensor_Value, [Timestamp]
 from SEP4_PMI.dbo.PlantInfo
 
 
-select * from Stage_PlantInfo
+select * from stage_dim_PlantData
 
 ----------------------------------------------------------- 
 
-drop table Stage_Calendar
+drop table stage_dim_Calendar
 
-CREATE TABLE Stage_Calendar
+CREATE TABLE stage_dim_Calendar
 (
-DateID int not null primary key,
-CalendarDate DATETIME not null,
-WeekDayName nvarchar(50) not null,
-MonthName nvarchar(50) not null,
-
+[CalendarDate] DATETIME null,
+WeekDayName nvarchar(50) null,
+MonthName nvarchar(50) null,
 )
 
+--Filling up stage_dim_calendar with dates
+GO
+DECLARE @StartDate DATETIME
+DECLARE @EndDate DATETIME
+SET @StartDate = '1996-01-01'
+SET @EndDate = DATEADD(d, 1095, @StartDate)
 
-insert into Stage_Calendar (DateID, CalendarDate, WeekDayName, MonthName)
-select DateID, CalendarDate, WeekDayName, MonthName
-from SEP4_PMI.dbo.Calendar
+WHILE @StartDate <= @EndDate
+	BEGIN
+		INSERT INTO [stage_dim_Calendar]
+		(
+			CalendarDate,
+			WeekDayName,
+			MonthName
+		)
+		SELECT @StartDate
+		, DATENAME (weekday, @StartDate)
+		, DATENAME (month, @StartDate)
 
-select * from Stage_Calendar
+		SET @StartDate = DATEADD (dd,1,@StartDate)
+	END
+
+
+
+select * from stage_dim_Calendar
 
 -------------------------------------------------------------------------------------------
 
 create table Stage_Fact_CO2 (
-Su_Info_ID int null,  ---- surrogate key
 Su_Plant_ID int null,   ---- surrogate key
 Su_Profile_ID int null,   ---- surrogate key
-Su_DateID int null,   ---- surrogate key
 Su_User_ID varchar(50) null, ---- surrogate key
-S_Info_ID int null,
-S_Plant_ID int null,
-S_Profile_ID int null,
-S_DateID int null,
-S_User_ID Varchar(50) null,
+Su_CalendarDate int null,   ---- surrogate key
+Su_Timestamp int null,   ---- surrogate key
+Plant_ID int null,
+Profile_ID int null,
+CalendarDate int null,
+User_ID Varchar(50) null,
 [TimeStamp] DateTime null,
+[Sensor_Value] decimal(3,3) null,
 CO2_Status varchar(50) null
 )
 
-insert into Stage_Fact_CO2 (S_Info_ID, S_Plant_ID, S_Profile_ID, S_DateID, S_User_ID , [TimeStamp], CO2_Status)
+insert into Stage_Fact_CO2 (Plant_ID, Profile_ID, CalendarDate, User_ID , [TimeStamp], [Sensor_Value] , CO2_Status)
                                            
-select PlantInfo.Info_ID, Plant.Plant_ID, PlantProfile.Profile_ID, Calendar.DateID, Users.[User_ID],  PlantInfo.[TimeStamp],
+select PlantInfo.Info_ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantInfo.timestamp, 111), Users.[User_ID],  CAST(PlantInfo.[TimeStamp] AS TIME),
 													case 
-													when Sensor_Value <CO2_Min then 'CO2 value is low' 
+													when Sensor_Value < CO2_Min then 'CO2 value is low'
 													when Sensor_Value > CO2_Min and Sensor_Value < CO2_Max then 'CO2 value is low'
                                                     when Sensor_Value > CO2_Max then 'CO2 value is high'
 										            end as CO2_Status   
 
 from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
-join SEP4_PMI.dbo.Calendar on Calendar.DateID = Calendar.DateID
 join SEP4_PMI.dbo.PlantInfo on PlantInfo.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantInfo.Sensor_Type = 'CO2' and Calendar.DateID = PlantInfo.Info_ID 
+where PlantInfo.Sensor_Type = 'CO2'
 
-drop table Stage_Fact_CO2
+--drop table Stage_Fact_CO2
 select * from Stage_Fact_CO2
-delete from Stage_Fact_CO2
 
 -----------------------------------------------------------------------------------------------------------
 
 
 
 create table Stage_Fact_Hum (
-Su_Info_ID int null,   ---- surrogate key
 Su_Plant_ID int null,   ---- surrogate key
 Su_Profile_ID int null,   ---- surrogate key
-Su_DateID int null,   ---- surrogate key
 Su_User_ID varchar(50) null, ---- surrogate key
-S_Info_ID int null,
-S_Plant_ID int null,
-S_Profile_ID int null,
-S_DateID int null,
-S_User_ID Varchar(50) null,
+Su_CalendarDate int null,   ---- surrogate key
+Su_Timestamp int null,   ---- surrogate key
+Plant_ID int null,
+Profile_ID int null,
+User_ID Varchar(50) null,
+CalendarDate int null,
 [TimeStamp] DateTime null,
+[Sensor_Value] decimal(3,3) null,
 Hum_Status varchar(50) null
 )
 
@@ -197,7 +206,6 @@ where PlantInfo.Sensor_Type = 'Light' and Calendar.DateID = PlantInfo.Info_ID
 
 select * from Stage_Fact_Light
 drop table Stage_Fact_Light
-delete from Stage_Fact_Light
 
 ---------------------------------------------------------------------------------------------------------------
 
