@@ -8,10 +8,10 @@ use Stage_SEP4_PMI
 
 create table stage_dim_Users (
 User_ID varchar(50) NULL ,
-[Password] varchar (50) NULL
 )
-insert into stage_dim_Users(User_ID, [Password])
-select [User_ID], [Password] from SEP4_PMI.dbo.Users
+
+insert into stage_dim_Users(User_ID)
+select [User_ID] from SEP4_PMI.dbo.Users
 
 select * from stage_dim_Users
 
