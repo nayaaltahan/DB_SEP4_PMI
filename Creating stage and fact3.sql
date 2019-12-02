@@ -98,7 +98,36 @@ WHILE @StartDate <= @EndDate
 
 select * from stage_dim_Calendar
 
+
+CREATE TABLE stage_dim_Time
+(
+[Time] TIME null,
+)
+
+--Filling up stage_dim_calendar with dates
+GO
+DECLARE @StartTime TIME
+DECLARE @EndTime TIME
+SET @StartTime = '00:00:00'
+SET @EndTime = '23:59:59'
+
+WHILE @StartTime <= @EndTime
+	BEGIN
+		INSERT INTO [stage_dim_Calendar]
+		(
+			[Time]
+		)
+		SELECT @StartTime
+
+		SET @StartTime = DATEADD (ss,1, @StartTime)
+	END
+
+
+
+select * from stage_dim_Calendar
+
 -------------------------------------------------------------------------------------------
+
 
 create table Stage_Fact_CO2 (
 Su_Plant_ID int null,   ---- surrogate key
