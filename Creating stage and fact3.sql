@@ -47,17 +47,6 @@ from SEP4_PMI.dbo.Plant
 
 
 select * from stage_dim_Plant
------------------------------------------------------------------
-drop table if exists stage_dim_PlantData
-
-
-
-insert into stage_dim_PlantData(S_Info_ID, Plant_ID,Sensor_Type, Sensor_Value, [Timestamp])
-select Info_ID, Plant_ID, Sensor_Type, Sensor_Value, [Timestamp]
-from SEP4_PMI.dbo.PlantInfo
-
-
-select * from stage_dim_PlantData
 
 ----------------------------------------------------------- 
 
