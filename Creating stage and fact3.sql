@@ -63,7 +63,7 @@ MonthName nvarchar(50) null,
 GO
 DECLARE @StartDate DATETIME
 DECLARE @EndDate DATETIME
-SET @StartDate = '1996-01-01'
+SET @StartDate = '2019-01-01'
 SET @EndDate = DATEADD(d, 1095, @StartDate)
 
 WHILE @StartDate <= @EndDate
@@ -95,12 +95,12 @@ CREATE TABLE stage_dim_Time
 GO
 DECLARE @StartTime TIME
 DECLARE @EndTime TIME
-SET @StartTime = '00:00:00'
-SET @EndTime = '23:59:59'
+SET @StartTime = TIMEFROMPARTS(0,0,0,0,1)
+SET @EndTime = TIMEFROMPARTS(23,59,59,0,1)
 
 WHILE @StartTime <= @EndTime
 	BEGIN
-		INSERT INTO [stage_dim_Calendar]
+		INSERT INTO [stage_dim_Time]
 		(
 			[Time]
 		)
@@ -111,7 +111,7 @@ WHILE @StartTime <= @EndTime
 
 
 
-select * from stage_dim_Calendar
+select * from stage_dim_Time
 
 -------------------------------------------------------------------------------------------
 
@@ -120,20 +120,20 @@ create table Stage_Fact_CO2 (
 Su_Plant_ID int null,   ---- surrogate key
 Su_Profile_ID int null,   ---- surrogate key
 Su_User_ID varchar(50) null, ---- surrogate key
-Su_CalendarDate int null,   ---- surrogate key
-Su_Timestamp int null,   ---- surrogate key
+Su_Date int null,   ---- surrogate key
+Su_Time int null,   ---- surrogate key
 Plant_ID int null,
 Profile_ID int null,
-CalendarDate int null,
+[Date] int null,
 User_ID Varchar(50) null,
-[TimeStamp] DateTime null,
+[Time] Time null,
 [Sensor_Value] decimal(3,3) null,
 CO2_Status varchar(50) null
 )
 
 insert into Stage_Fact_CO2 (Plant_ID, Profile_ID, CalendarDate, User_ID , [TimeStamp], [Sensor_Value] , CO2_Status)
                                            
-select PlantInfo.Info_ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantInfo.timestamp, 111), Users.[User_ID],  CAST(PlantInfo.[TimeStamp] AS TIME),
+select Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantData.timestamp, 111), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),PlantData.Sensor_Value,
 													case 
 													when Sensor_Value < CO2_Min then 'CO2 value is low'
 													when Sensor_Value > CO2_Min and Sensor_Value < CO2_Max then 'CO2 value is low'
@@ -142,9 +142,9 @@ select PlantInfo.Info_ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCH
 
 from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
-join SEP4_PMI.dbo.PlantInfo on PlantInfo.Plant_ID = Plant.Plant_ID
+join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantInfo.Sensor_Type = 'CO2'
+where PlantData.Sensor_Type = 'CO2'
 
 --drop table Stage_Fact_CO2
 select * from Stage_Fact_CO2
@@ -170,7 +170,7 @@ Hum_Status varchar(50) null
 
 insert into Stage_Fact_Hum (Plant_ID, Profile_ID, CalendarDate, User_ID , [TimeStamp], [Sensor_Value] , Hum_Status)
                                            
-select PlantInfo.Info_ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantInfo.timestamp, 111), Users.[User_ID],  CAST(PlantInfo.[TimeStamp] AS TIME),
+select PlantData.ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantData.timestamp, 111), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),
                                                     case
 													when Sensor_Value <Hum_Min then 'Humidity value is low' 
 													when Sensor_Value > Hum_Min and Sensor_Value < Hum_Max then 'Humidity value is low'
@@ -179,9 +179,9 @@ select PlantInfo.Info_ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCH
 
 from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
-join SEP4_PMI.dbo.PlantInfo on PlantInfo.Plant_ID = Plant.Plant_ID
+join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantInfo.Sensor_Type = 'Humidity'
+where PlantData.Sensor_Type = 'Humidity'
 
 select * from Stage_Fact_Hum
 --drop table Stage_Fact_Hum
@@ -203,9 +203,9 @@ CalendarDate int null,
 Light_Status varchar(50) null
 )
 
-insert into Stage_Fact_Light(Plant_ID, Profile_ID, CalendarDate, User_ID , [TimeStamp], [Sensor_Value] ,  Light_Status)
+insert into Stage_Fact_Light(Plant_ID, Profile_ID, CalendarDate, User_ID , [TimeStamp], [Sensor_Value] , Light_Status)
                                            
-select PlantInfo.Info_ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantInfo.timestamp, 111), Users.[User_ID],  CAST(PlantInfo.[TimeStamp] AS TIME),
+select PlantData.ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantData.timestamp, 111), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),
                                                     case
 													when Sensor_Value <Light_Min then 'Light value is low' 
 													when Sensor_Value > Light_Min and Sensor_Value < Light_Max then 'Light value is low'
@@ -214,9 +214,9 @@ select PlantInfo.Info_ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCH
 
 from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
-join SEP4_PMI.dbo.PlantInfo on PlantInfo.Plant_ID = Plant.Plant_ID
+join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantInfo.Sensor_Type = 'Light'
+where PlantData.Sensor_Type = 'Light'
 
 select * from Stage_Fact_Light
 --drop table Stage_Fact_Light
@@ -241,7 +241,7 @@ Tem_Status varchar(50) null
 
 insert into Stage_Fact_Tem (Plant_ID, Profile_ID, CalendarDate, User_ID , [TimeStamp], [Sensor_Value] , Tem_Status)
                                            
-select PlantInfo.Info_ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantInfo.timestamp, 111), Users.[User_ID],  CAST(PlantInfo.[TimeStamp] AS TIME),
+select PlantData.ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantData.timestamp, 111), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),
 												    case 
 													when Sensor_Value <Tem_Min then 'temperature value is low' 
 													when Sensor_Value > Tem_Min and Sensor_Value < Tem_Max then 'Temperature value is low'
@@ -250,10 +250,9 @@ select PlantInfo.Info_ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCH
 
 from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
-join SEP4_PMI.dbo.Calendar on Calendar.DateID = Calendar.DateID
-join SEP4_PMI.dbo.PlantInfo on PlantInfo.Plant_ID = Plant.Plant_ID
+join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantInfo.Sensor_Type = 'Temperature' and Calendar.DateID = PlantInfo.Info_ID
+where PlantData.Sensor_Type = 'Temperature'
 
 select * from Stage_Fact_Tem
 --drop table Stage_Fact_Tem
