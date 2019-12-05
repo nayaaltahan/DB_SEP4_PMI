@@ -7,11 +7,12 @@ use Stage_SEP4_PMI
 ----Extracting user data from source 
 
 create table stage_dim_Users (
-[Email] varchar(50) NULL ,
+    [User_ID] int NULL,
+    [Email] varchar(50) NULL ,
 )
 
-insert into stage_dim_Users(User_ID)
-select [User_ID] from SEP4_PMI.dbo.Users
+insert into stage_dim_Users(User_ID, Email)
+select [User_ID], email from SEP4_PMI.dbo.Users
 
 select * from stage_dim_Users
 
@@ -54,15 +55,15 @@ drop table stage_dim_Calendar
 
 CREATE TABLE stage_dim_Calendar
 (
-[CalendarDate] DATETIME null,
+[CalendarDate] DATE null,
 WeekDayName nvarchar(50) null,
 MonthName nvarchar(50) null,
 )
 
 --Filling up stage_dim_calendar with dates
 GO
-DECLARE @StartDate DATETIME
-DECLARE @EndDate DATETIME
+DECLARE @StartDate DATE
+DECLARE @EndDate DATE
 SET @StartDate = '2019-01-01'
 SET @EndDate = DATEADD(d, 1095, @StartDate)
 
@@ -124,14 +125,14 @@ Su_Date int null,   ---- surrogate key
 Su_Time int null,   ---- surrogate key
 Plant_ID int null,
 Profile_ID int null,
-[Date] int null,
+[Date] DATE null,
 [Time] Time null,
 User_ID Varchar(50) null,
 [Sensor_Value] decimal(3,3) null,
 CO2_Status varchar(50) null
 )
 
-insert into Stage_Fact_CO2 (Plant_ID, Profile_ID, CalendarDate, User_ID , [TimeStamp], [Sensor_Value] , CO2_Status)
+insert into Stage_Fact_CO2 (Plant_ID, Profile_ID, [Date] , User_ID , [Time], [Sensor_Value] , CO2_Status)
                                            
 select Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantData.timestamp, 111), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),PlantData.Sensor_Value,
 													case 
@@ -162,8 +163,8 @@ Su_Timestamp int null,   ---- surrogate key
 Plant_ID int null,
 Profile_ID int null,
 User_ID Varchar(50) null,
-CalendarDate int null,
-[TimeStamp] DateTime null,
+[Date] DATE null,
+[Time] TIME null,
 [Sensor_Value] decimal(3,3) null,
 Hum_Status varchar(50) null
 )
@@ -197,13 +198,13 @@ Su_Timestamp int null,   ---- surrogate key
 Plant_ID int null,
 Profile_ID int null,
 User_ID Varchar(50) null,
-CalendarDate int null,
-[TimeStamp] DateTime null,
+[Date] int null,
+[Time] DateTime null,
 [Sensor_Value] decimal(3,3) null,
 Light_Status varchar(50) null
 )
 
-insert into Stage_Fact_Light(Plant_ID, Profile_ID, CalendarDate, User_ID , [TimeStamp], [Sensor_Value] , Light_Status)
+insert into Stage_Fact_Light(Plant_ID, Profile_ID, [Date], User_ID , [Time], [Sensor_Value] , Light_Status)
                                            
 select PlantData.ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantData.timestamp, 111), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),
                                                     case
@@ -233,13 +234,13 @@ Su_Timestamp int null,   ---- surrogate key
 Plant_ID int null,
 Profile_ID int null,
 User_ID Varchar(50) null,
-CalendarDate int null,
-[TimeStamp] DateTime null,
+[Date] int null,
+[Time] DateTime null,
 [Sensor_Value] decimal(3,3) null,
 Tem_Status varchar(50) null
 )
 
-insert into Stage_Fact_Tem (Plant_ID, Profile_ID, CalendarDate, User_ID , [TimeStamp], [Sensor_Value] , Tem_Status)
+insert into Stage_Fact_Tem (Plant_ID, Profile_ID, [Date], User_ID , [Time], [Sensor_Value] , Tem_Status)
                                            
 select PlantData.ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantData.timestamp, 111), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),
 												    case 
