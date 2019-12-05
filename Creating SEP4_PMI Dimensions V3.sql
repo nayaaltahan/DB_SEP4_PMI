@@ -67,7 +67,7 @@ create table Dim_Plant (
 	"ValidTo" date not null DEFAULT '01/01/2099'
 )
 
--- loading data from the staging area to the warehous
+-- loading data from the staging area to the warehouse
 
 insert into Dim_Plant (Plant_ID, Plant_Name)
 select Plant_ID, Plant_Name
@@ -77,26 +77,27 @@ from Stage_SEP4_PMI.dbo.stage_dim_Plant
 --**********************************************Dim_Fact_CO2***************************************************--
 
 create table Dim_Fact_CO2 (
-Su_Info_ID int			not null,  ---- surrogate key
 Su_Plant_ID int			not null,   ---- surrogate key
 Su_Profile_ID int		not null,   ---- surrogate key
 Su_Date_ID  int			not null,   ---- surrogate key
+Su_Time_ID int          not null, --- surrogate key
 Su_User_ID int			not null, ---- surrogate key
-D_Info_ID int			not null,
-D_Plant_ID int			not null,
-D_Profile_ID int		not null,
-D_User_ID Varchar(50)	not null,
-[TimeStamp] DateTime	not null,
+Plant_ID int			not null,
+Profile_ID int		    not null,
+User_ID int         	not null,
+[Time] TIME	            not null,
+[Date] DATE	            not null,
+[Sensor_Value] decimal(3,3) null,
 CO2_Status varchar(50)	not null
-constraint "PK_Info_ID_CO2" primary key("Su_Info_ID", "Su_Plant_ID", "Su_Profile_ID", "Su_Date_ID", "Su_User_ID")
-
-constraint "Su_Info_ID_CO2" foreign key("Su_Info_ID" ) references "Dim_PlantInfo"("Su_Info_ID"),
+constraint "PK_CO2" primary key("Su_Plant_ID", "Su_Profile_ID", "Su_Date_ID", "Su_User_ID", "Su_Time_ID")
 
 constraint "Su_Plant_ID_CO2" foreign key("Su_Plant_ID" )references "Dim_Plant"("Su_Plant_ID"),
 
 constraint "Su_Profile_ID_CO2" foreign key("Su_Profile_ID" )references "Dim_PlantProfile"("Su_Profile_ID"),
 
-constraint "Su_Date_ID_CO2" foreign key("Su_Date_ID")references "Dim_Date"("Su_Date_ID"),
+constraint "Su_Date_ID_CO2" foreign key("Su_Date_ID")references "Dim_Calendar"("Su_Date_ID"),
+
+constraint "Su_Time_ID_CO2" foreign key("Su_Time_ID")references "Dim_Time"("Su_Time_ID"),
 
 constraint "Su_User_ID_CO2" foreign key("Su_User_ID")references "Dim_Users"("Su_User_ID")
 
@@ -105,11 +106,11 @@ constraint "Su_User_ID_CO2" foreign key("Su_User_ID")references "Dim_Users"("Su_
 
 ---Populate Stage CO2 facts table
 
-insert into Dim_Fact_CO2 (Su_Info_ID, Su_Plant_ID, Su_Profile_ID, Su_Date_ID , Su_User_ID ,D_Info_ID, D_Plant_ID, D_Profile_ID,
-                                     D_User_ID,  [TimeStamp], CO2_Status)
+insert into Dim_Fact_CO2 (Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID ,Plant_ID, Profile_ID,
+                                     User_ID, [Date],[Time], Sensor_Value,CO2_Status)
                                            
-select Su_Info_ID, Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,  Su_User_ID, St_Info_ID, 
-             St_Plant_ID, St_Profile_ID, St_User_ID,  [TimeStamp], CO2_Status
+select Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID,
+             Plant_ID, Profile_ID, User_ID ,[Date], [Time], SensorValue, CO2_Status
 												
 from Stage_SEP4_PMI.dbo.Stage_Fact_CO2
 
@@ -118,40 +119,39 @@ from Stage_SEP4_PMI.dbo.Stage_Fact_CO2
 
 
 create table Dim_Fact_Hum (
-Su_Info_ID int			not null,  ---- surrogate key
 Su_Plant_ID int			not null,   ---- surrogate key
 Su_Profile_ID int		not null,   ---- surrogate key
 Su_Date_ID  int			not null,   ---- surrogate key
+Su_Time_ID int          not null, --- surrogate key
 Su_User_ID int			not null, ---- surrogate key
-D_Info_ID int			not null,
-D_Plant_ID int			not null,
-D_Profile_ID int		not null,
-D_User_ID Varchar(50)	not null,
-[TimeStamp] DateTime	not null,
+Plant_ID int			not null,
+Profile_ID int		    not null,
+User_ID int         	not null,
+[Time] TIME	            not null,
+[Date] DATE	            not null,
+[Sensor_Value] decimal(3,3) null,
 Hum_Status varchar(50)	not null
-constraint "PK_Info_ID_Hum" primary key("Su_Info_ID", "Su_Plant_ID", "Su_Profile_ID", "Su_Date_ID", "Su_User_ID")
-
-constraint "Su_Info_ID_Hum" foreign key("Su_Info_ID" ) references "Dim_PlantInfo"("Su_Info_ID"),
+constraint "PK_Hum" primary key("Su_Plant_ID", "Su_Profile_ID", "Su_Date_ID", "Su_User_ID", "Su_Time_ID")
 
 constraint "Su_Plant_ID_Hum" foreign key("Su_Plant_ID" )references "Dim_Plant"("Su_Plant_ID"),
 
 constraint "Su_Profile_ID_Hum" foreign key("Su_Profile_ID" )references "Dim_PlantProfile"("Su_Profile_ID"),
 
-constraint "Su_Date_ID_Hum" foreign key("Su_Date_ID")references "Dim_Date"("Su_Date_ID"),
+constraint "Su_Date_ID_Hum" foreign key("Su_Date_ID")references "Dim_Calendar"("Su_Date_ID"),
 
-constraint "Su_User_ID_Hum" foreign key("Su_User_ID")references "Dim_Users"("Su_User_ID")
+constraint "Su_Time_ID_Hum" foreign key("Su_Time_ID")references "Dim_Time"("Su_Time_ID"),
 
-)
+constraint "Su_User_ID_Hum" foreign key("Su_User_ID")references "Dim_Users"("Su_User_ID"))
 
 select * from Dim_Fact_Hum
 
 ---Populate Stage CO2 facts table
 
-insert into Dim_Fact_Hum (Su_Info_ID, Su_Plant_ID, Su_Profile_ID, Su_Date_ID , Su_User_ID ,D_Info_ID, D_Plant_ID, D_Profile_ID,
-                                     D_User_ID,  [TimeStamp], Hum_Status)
-                                           
-select Su_Info_ID, Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,  Su_User_ID, St_Info_ID, 
-             St_Plant_ID, St_Profile_ID, St_User_ID,  [TimeStamp], Hum_Status
+insert into Dim_Fact_Hum (Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID ,Plant_ID, Profile_ID,
+                                     User_ID, [Date],[Time], Sensor_Value,Hum_Status)
+
+select Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID,
+             Plant_ID, Profile_ID, User_ID ,[Date], [Time], SensorValue, Hum_Status
 												
 from Stage_SEP4_PMI.dbo.Stage_Fact_Hum
 
@@ -159,26 +159,27 @@ from Stage_SEP4_PMI.dbo.Stage_Fact_Hum
 
 
 create table Dim_Fact_Light (
-Su_Info_ID int			not null,  ---- surrogate key
 Su_Plant_ID int			not null,   ---- surrogate key
 Su_Profile_ID int		not null,   ---- surrogate key
 Su_Date_ID  int			not null,   ---- surrogate key
+Su_Time_ID int          not null, --- surrogate key
 Su_User_ID int			not null, ---- surrogate key
-D_Info_ID int			not null,
-D_Plant_ID int			not null,
-D_Profile_ID int		not null,
-D_User_ID Varchar(50)	not null,
-[TimeStamp] DateTime	not null,
+Plant_ID int			not null,
+Profile_ID int		    not null,
+User_ID int         	not null,
+[Time] TIME	            not null,
+[Date] DATE	            not null,
+[Sensor_Value] decimal(3,3) null,
 Light_Status varchar(50)not null
-constraint "PK_Info_ID_Light" primary key("Su_Info_ID", "Su_Plant_ID", "Su_Profile_ID", "Su_Date_ID", "Su_User_ID")
-
-constraint "Su_Info_ID_Light" foreign key("Su_Info_ID" ) references "Dim_PlantInfo"("Su_Info_ID"),
+constraint "PK_Light" primary key("Su_Plant_ID", "Su_Profile_ID", "Su_Date_ID", "Su_User_ID", "Su_Time_ID")
 
 constraint "Su_Plant_ID_Light" foreign key("Su_Plant_ID" )references "Dim_Plant"("Su_Plant_ID"),
 
 constraint "Su_Profile_ID_Light" foreign key("Su_Profile_ID" )references "Dim_PlantProfile"("Su_Profile_ID"),
 
 constraint "Su_Date_ID_Light" foreign key("Su_Date_ID")references "Dim_Date"("Su_Date_ID"),
+
+constraint "Su_Time_ID_Light" foreign key("Su_Time_ID")references "Dim_Time"("Su_Time_ID"),
 
 constraint "Su_User_ID_Light" foreign key("Su_User_ID")references "Dim_Users"("Su_User_ID")
 
@@ -188,37 +189,38 @@ select * from Dim_Fact_Light
 
 ---Populate Stage CO2 facts table
 
-insert into Dim_Fact_Light(Su_Info_ID, Su_Plant_ID, Su_Profile_ID, Su_Date_ID , Su_User_ID ,D_Info_ID, D_Plant_ID, D_Profile_ID,
-                                     D_User_ID,  [TimeStamp], Light_Status)
-                                           
-select Su_Info_ID, Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,  Su_User_ID, St_Info_ID, 
-             St_Plant_ID, St_Profile_ID, St_User_ID,  [TimeStamp], Light_Status
+insert into Dim_Fact_Light(Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID ,Plant_ID, Profile_ID,
+                                     User_ID, [Date],[Time], Sensor_Value,Light_Status)
+
+select Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID,
+             Plant_ID, Profile_ID, User_ID ,[Date], [Time], SensorValue, Light_Status
 												
 from Stage_SEP4_PMI.dbo.Stage_Fact_Light
 
 --**********************************************Dim_Fact_Tem***************************************************--
 
 create table Dim_Fact_Tem (
-Su_Info_ID int			not null,  ---- surrogate key
 Su_Plant_ID int			not null,   ---- surrogate key
 Su_Profile_ID int		not null,   ---- surrogate key
 Su_Date_ID  int			not null,   ---- surrogate key
+Su_Time_ID int          not null, --- surrogate key
 Su_User_ID int			not null, ---- surrogate key
-D_Info_ID int			not null,
-D_Plant_ID int			not null,
-D_Profile_ID int		not null,
-D_User_ID Varchar(50)	not null,
-[TimeStamp] DateTime	not null,
+Plant_ID int			not null,
+Profile_ID int		    not null,
+User_ID int         	not null,
+[Time] TIME	            not null,
+[Date] DATE	            not null,
+[Sensor_Value] decimal(3,3) null,
 Tem_Status varchar(50)not null
-constraint "PK_Info_ID_Tem" primary key("Su_Info_ID", "Su_Plant_ID", "Su_Profile_ID", "Su_Date_ID", "Su_User_ID")
-
-constraint "Su_Info_ID_Tem" foreign key("Su_Info_ID" ) references "Dim_PlantInfo"("Su_Info_ID"),
+constraint "PK_Tem" primary key("Su_Plant_ID", "Su_Profile_ID", "Su_Date_ID", "Su_User_ID", "Su_Time_ID")
 
 constraint "Su_Plant_ID_Tem" foreign key("Su_Plant_ID" )references "Dim_Plant"("Su_Plant_ID"),
 
 constraint "Su_Profile_ID_Tem" foreign key("Su_Profile_ID" )references "Dim_PlantProfile"("Su_Profile_ID"),
 
 constraint "Su_Date_ID_Tem" foreign key("Su_Date_ID")references "Dim_Date"("Su_Date_ID"),
+
+constraint "Su_Time_ID_Tem" foreign key("Su_Time_ID")references "Dim_Time"("Su_Time_ID"),
 
 constraint "Su_User_ID_Tem" foreign key("Su_User_ID")references "Dim_Users"("Su_User_ID")
 
@@ -228,10 +230,10 @@ select * from Dim_Fact_Tem
 
 ---Populate Stage CO2 facts table
 
-insert into Dim_Fact_Tem(Su_Info_ID, Su_Plant_ID, Su_Profile_ID, Su_Date_ID , Su_User_ID ,D_Info_ID, D_Plant_ID, D_Profile_ID,
-                                     D_User_ID,  [TimeStamp], Tem_Status)
-                                           
-select Su_Info_ID, Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,  Su_User_ID, St_Info_ID, 
-             St_Plant_ID, St_Profile_ID, St_User_ID,  [TimeStamp], Tem_Status
+insert into Dim_Fact_Tem(Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID ,Plant_ID, Profile_ID,
+                                     User_ID, [Date],[Time], Sensor_Value,Tem_Status)
+
+select Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID,
+             Plant_ID, Profile_ID, User_ID ,[Date], [Time], SensorValue, Tem_Status
 												
 from Stage_SEP4_PMI.dbo.Stage_Fact_tem

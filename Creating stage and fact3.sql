@@ -125,8 +125,8 @@ Su_Time int null,   ---- surrogate key
 Plant_ID int null,
 Profile_ID int null,
 [Date] int null,
-User_ID Varchar(50) null,
 [Time] Time null,
+User_ID Varchar(50) null,
 [Sensor_Value] decimal(3,3) null,
 CO2_Status varchar(50) null
 )
