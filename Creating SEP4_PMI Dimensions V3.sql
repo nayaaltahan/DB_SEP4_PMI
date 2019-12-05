@@ -17,11 +17,12 @@ from Stage_SEP4_PMI.dbo.stage_dim_Users
 
 --**************************************Dim_Date_Calendar******************************--
 
-create table Dim_Calendar(
+create table Dim_Calendar
+(
  Su_Date_ID int identity (1, 1) NOT NULL primary key,
  [CalendarDate] DATETIME,
  WeekDayName nvarchar(50),
- MonthName nvarchar(50) 
+ MonthName nvarchar(50)
 )
 
 
@@ -36,8 +37,7 @@ from Stage_SEP4_PMI.dbo.stage_dim_Calendar
 
 CREATE TABLE dbo.Dim_PlantProfile(
 	Su_Profile_ID int identity (1,1) not null primary key, ---surrogate key
-	D_Profile_ID int				 not null,             ---refers to the PlantProfile in the business database
-	[D_User_ID] int					 not null ,
+	Profile_ID int				 not null,             ---refers to the PlantProfile in the business database
 	Profile_Name varchar(50)		 not null,
 	CO2_Max decimal(18, 0)			 not null,
 	CO2_Min decimal(18, 0)			 not null,
@@ -47,56 +47,31 @@ CREATE TABLE dbo.Dim_PlantProfile(
 	Tem_Min decimal(18, 0)			 not null,
 	Light_Max decimal(18, 0)		 not null,
 	Light_Min decimal(18, 0)		 not null,
-	"ValidFrom" nvarchar(20)		 not null DEFAULT '01/11/2019',
-	"Validto" nvarchar(20)			 not null DEFAULT '01/01/2099'
+	"ValidFrom" date		 not null DEFAULT '01/11/2019',
+	"ValidTo" date			 not null DEFAULT '01/01/2099'
 ) 
 
--- loading data from the staging area to the warehous
+-- loading data from the staging area to the warehouse
 
-insert into Dim_PlantProfile (D_Profile_ID, [D_User_ID], Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max, Light_Min)
-select St_Profile_ID,[St_User_ID], Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max, Light_Min
-from Stage_SEP4_PMI.dbo.Stage_PlantProfile
-
-
---**************************************Dim_PlantInfo***********************************--
-
-CREATE TABLE dbo.Dim_PlantInfo(
-    Su_Info_ID int identity (1,1) not null primary key, ---surrogate key
-	D_Info_ID int				  not null,				---refers to the PlantInfo in the business database
-	D_Plant_ID int				  not null,
-	Sensor_Type varchar(50)		  not null,
-	Sensor_Value decimal(6, 3)    not null,
-	[TimeStamp] datetime          not null,
-	"ValidFrom" nvarchar(20)	  not null DEFAULT '01/11/2019',
-	"Validto" nvarchar(20)		  not null DEFAULT '01/01/2099'
-
-)
-
--- loading data from the staging area to the warehous
-drop table Dim_PlantInfo
-insert into Dim_PlantInfo (D_Info_ID, D_Plant_ID, Sensor_Type, Sensor_Value, TimeStamp)
-select St_Info_ID , St_Plant_ID, Sensor_Type, Sensor_Value, [TimeStamp]
-
-from Stage_SEP4_PMI.dbo.Stage_PlantInfo
-
-select * from Dim_PlantInfo
+insert into Dim_PlantProfile (Profile_ID, Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max, Light_Min)
+select Profile_ID, Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max, Light_Min
+from Stage_SEP4_PMI.dbo.stage_dim_PlantProfile
 
 
 --**********************************************DIm_Plant***************************************************--
 create table Dim_Plant (
 	Su_Plant_ID int identity (1,1) not null primary key, ---surrogate key
-	D_Plant_ID int				   not null,             ---refers to the Plant in the business database
-	D_Profile_ID int				   not null,			
-	Plant_Name varchar(50)         not null,
-	"ValidFrom" nvarchar(20)	   not null DEFAULT '01/11/2019',
-	"Validto" nvarchar(20)		   not null DEFAULT '01/01/2099'
+	[Plant_ID] int				   not null,             ---refers to the Plant in the business database
+	[Plant_Name] varchar(50)         not null,
+	"ValidFrom" date	   not null DEFAULT '01/11/2019',
+	"ValidTo" date not null DEFAULT '01/01/2099'
 )
 
 -- loading data from the staging area to the warehous
 
-insert into Dim_Plant (D_Plant_ID, D_Profile_ID, Plant_Name)
-select St_Plant_ID, St_Profile_ID, Plant_Name 
-from Stage_SEP4_PMI.dbo.Stage_Plant
+insert into Dim_Plant (Plant_ID, Plant_Name)
+select Plant_ID, Plant_Name
+from Stage_SEP4_PMI.dbo.stage_dim_Plant
 
 
 --**********************************************Dim_Fact_CO2***************************************************--
