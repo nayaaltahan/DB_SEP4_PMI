@@ -17,20 +17,19 @@ from Stage_SEP4_PMI.dbo.stage_dim_Users
 
 --**************************************Dim_Date_Calendar******************************--
 
-create table Dim_Date(
+create table Dim_Calendar(
  Su_Date_ID int identity (1, 1) NOT NULL primary key,
- D_Date_ID int					not null,
  [CalendarDate] DATETIME,
  WeekDayName nvarchar(50),
  MonthName nvarchar(50) 
 )
 
 
--- loading data from the staging area to the warehous
+-- loading data from the staging area to the warehouse
 
-insert into Dim_Date (D_Date_ID, [CalendarDate], WeekDayName,  MonthName)
-select St_Date_ID,  [CalendarDate], WeekDayName, MonthName
-from Stage_SEP4_PMI.dbo.Stage_Date
+insert into Dim_Calendar ([CalendarDate], WeekDayName,  MonthName)
+select [CalendarDate], WeekDayName, MonthName
+from Stage_SEP4_PMI.dbo.stage_dim_Calendar
 
 
 --**************************************Dim_PlantProfile********************************--
