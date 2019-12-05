@@ -6,16 +6,14 @@ use Dim_SEP4_PMI
 --**************************************Dim_Users***********************************--
 create table Dim_Users (
 Su_User_ID int identity(1,1) not null primary key,
-D_User_ID int not null,
-D_User_Name varchar(50) not null,
-[Password] varchar (50) not null
+[Email] varchar(50) not null,
 )
 
--- loading data from the staging area to the warehous
+-- loading data from the staging area to the warehouse
 
-insert into Dim_Users(D_User_ID, [D_User_Name], [Password]) 
-select [St_User_ID], [St_User_Name], [Password] 
-from Stage_SEP4_PMI.dbo.Stage_Users
+insert into Dim_Users([Email])
+select [Email]
+from Stage_SEP4_PMI.dbo.stage_dim_Users
 
 --**************************************Dim_Date_Calendar******************************--
 

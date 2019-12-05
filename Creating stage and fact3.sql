@@ -7,7 +7,7 @@ use Stage_SEP4_PMI
 ----Extracting user data from source 
 
 create table stage_dim_Users (
-User_ID varchar(50) NULL ,
+[Email] varchar(50) NULL ,
 )
 
 insert into stage_dim_Users(User_ID)
