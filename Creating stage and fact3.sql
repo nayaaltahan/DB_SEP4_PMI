@@ -169,7 +169,7 @@ User_ID Varchar(50) null,
 Hum_Status varchar(50) null
 )
 
-insert into Stage_Fact_Hum (Plant_ID, Profile_ID, CalendarDate, User_ID , [TimeStamp], [Sensor_Value] , Hum_Status)
+insert into Stage_Fact_Hum (Plant_ID, Profile_ID, [Date], User_ID , [Time], [Sensor_Value] , Hum_Status)
                                            
 select PlantData.ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantData.timestamp, 111), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),
                                                     case
