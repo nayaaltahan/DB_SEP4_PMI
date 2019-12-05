@@ -3,8 +3,7 @@ create database SEP4_PMI
 
 use SEP4_PMI   
 
-drop table if exists [Time]
-drop table if exists [Users] 
+drop table if exists [Users]
 drop table if exists PlantProfile
 drop table if exists Plant
 drop table if exists PlantInfo
@@ -25,7 +24,7 @@ values
 ('ziad7777@gmail.com' , '23456'),
 ('naya7777@gmail.com', '34567')
 
-select * from Users
+select * from SEP4_PMI.dbo.Users
 -----------------------------------PlantProfile-------------------------------
 
 create table PlantProfile (
@@ -60,6 +59,7 @@ select * from PlantProfile
 
 create table Plant (
 Plant_ID int identity (1,1) not null primary key,
+[Device_EUI] varchar(50) not null,
 Profile_ID int not null,
 PlantName varchar(50) null
 foreign key ("Profile_ID")   references dbo.PlantProfile ("Profile_ID")
@@ -75,20 +75,20 @@ values  ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 1),'flower
 		( (select Profile_ID from dbo.PlantProfile where Profile_ID = 7),'flowerF'),
 		( (select Profile_ID from dbo.PlantProfile where Profile_ID = 8),'flowerG')
 
-select * from Plant
+select * from Plant;
 ---------------------------------Device--------------------------------------
 
-create table PlantInfo (
-Info_ID int identity(1,1) not null primary key,
+create table PlantData (
+Data_ID int identity(1,1) not null primary key,
 Plant_ID int not null,
 Sensor_Type varchar (50) null,
 Sensor_Value decimal (6,3) not null,
 [TimeStamp] DateTime not null
     foreign key ("Plant_ID") references dbo.Plant ("Plant_ID")
 )
-delete from PlantInfo
+delete from PlantData;
 
-insert into dbo.PlantInfo(Plant_ID, Sensor_Type, Sensor_Value, [Timestamp])
+insert into dbo.PlantData(Plant_ID, Sensor_Type, Sensor_Value, [Timestamp])
     values ( (select Plant_ID from dbo.Plant where Plant_ID = 1) , 'CO2', 120, '2019-11-01 00:00:01.000'),
 	       ( (select Plant_ID from dbo.Plant where Plant_ID = 2), 'Humidity', 1.30, '2019-11-01 00:00:01.000'),
 	       ( (select Plant_ID from dbo.Plant where Plant_ID = 3), 'Temperature' , 25, '2019-11-01 00:00:01.000'),
@@ -98,29 +98,4 @@ insert into dbo.PlantInfo(Plant_ID, Sensor_Type, Sensor_Value, [Timestamp])
 		   ( (select Plant_ID from dbo.Plant where Plant_ID = 7), 'Humidity' , 10, '2019-11-01 00:00:01.000'),
 		   ( (select Plant_ID from dbo.Plant where Plant_ID = 8), 'CO2' , 12, '2019-11-01 00:00:01.000')
 
-select * from PlantInfo
-
----------------------------------Caledar--------------------------------------
-create table [Date](
- Date_ID int identity (1, 1) NOT NULL primary key,	
- [CalendarDate] DATETIME,
- WeekDayName nvarchar(50),
- MonthName nvarchar(50) 
-)
-
-
-  DECLARE @StartDate DATETIME 
-  DECLARE @EndDate DATETIME 
-  SET @StartDate= '2019-11-01' 
-   SET @EndDate= DATEADD(d, 1095, @StartDate) -- 90 days has been assigned until we finish the SEP4 Exam
-   WHILE @StartDate<= @EndDate
-   BEGIN 
-   INSERT INTO [Date](CalendarDate,WeekDayName,MonthName)
-   SELECT 
-   @StartDate,DATENAME(weekday,@startDate),
-   DATENAME(month, @StartDate)SET @StartDate= DATEADD(dd, 1, @StartDate)END
-
-   select * from [Date]
-
-
-
+select * from PlantData;
