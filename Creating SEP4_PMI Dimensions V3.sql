@@ -32,6 +32,21 @@ insert into Dim_Calendar ([CalendarDate], WeekDayName,  MonthName)
 select [CalendarDate], WeekDayName, MonthName
 from Stage_SEP4_PMI.dbo.stage_dim_Calendar
 
+--**************************************Dim_Time******************************--
+
+create table Dim_Time
+(
+ Su_Date_ID int identity (1, 1) NOT NULL primary key,
+ [Time] TIME
+)
+
+
+-- loading data from the staging area to the warehouse
+
+insert into Dim_Time ([Time])
+select [Time]
+from Stage_SEP4_PMI.dbo.stage_dim_Time
+
 
 --**************************************Dim_PlantProfile********************************--
 
