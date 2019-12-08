@@ -6,7 +6,7 @@ use SEP4_PMI
 drop table if exists [Users]
 drop table if exists PlantProfile
 drop table if exists Plant
-drop table if exists PlantInfo
+drop table if exists PlantData
 
 ------------------------------------Users Table-----------------------------------------
 create table Users (
@@ -44,14 +44,14 @@ foreign key ("User_ID")   references dbo.Users ("User_ID")
 delete from PlantProfile
 
 insert into PlantProfile ( [User_ID], Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max ,Light_Min)
-values ((select [User_ID] from dbo.Users where [User_ID] = 1), 'flower1' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
-       ( (select [User_ID] from dbo.Users where [User_ID] = 2), 'flower2' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
-	   ( (select [User_ID] from dbo.Users where [User_ID] = 3), 'flower3' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
-       ( (select [User_ID] from dbo.Users where [User_ID] = 3), 'flower4' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
-	    ( (select [User_ID] from dbo.Users where [User_ID] = 3), 'flower5' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
-		((select [User_ID] from dbo.Users where [User_ID] = 1), 'flower6' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
-		((select [User_ID] from dbo.Users where [User_ID] = 2), 'flower7' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
-		((select [User_ID] from dbo.Users where [User_ID] = 1), 'flower8' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100)
+values ((select [User_ID] from dbo.Users where [User_ID] = 1), 'gwan flower 1' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
+       ( (select [User_ID] from dbo.Users where [User_ID] = 2), 'ziad flower 1' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
+	   ( (select [User_ID] from dbo.Users where [User_ID] = 3), 'naya flower 1' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
+       ( (select [User_ID] from dbo.Users where [User_ID] = 3), 'naya flower 2' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
+	    ( (select [User_ID] from dbo.Users where [User_ID] = 3), 'naya flower 3' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
+		((select [User_ID] from dbo.Users where [User_ID] = 1), 'gwan flower 2' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
+		((select [User_ID] from dbo.Users where [User_ID] = 2), 'ziad flower 2' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
+		((select [User_ID] from dbo.Users where [User_ID] = 1), 'gwan flower 3' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100)
 
 select * from PlantProfile
 	  
@@ -59,24 +59,12 @@ select * from PlantProfile
 
 create table Plant (
 Plant_ID int identity (1,1) not null primary key,
-[Device_EUI] varchar(50) not null,
+[Device_ID] varchar(50) not null,
 Profile_ID int not null,
 PlantName varchar(50) null
 foreign key ("Profile_ID")   references dbo.PlantProfile ("Profile_ID")
 )
 
-insert into dbo.Plant (Profile_ID, PlantName)
-values  ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 1),'flowerA'),
-        ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 2),'flowerB'),
-        ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 3),'flowerC'),
-        ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 4),'flowerC'),
-		( (select Profile_ID from dbo.PlantProfile where Profile_ID = 5),'flowerD'),
-		( (select Profile_ID from dbo.PlantProfile where Profile_ID = 6),'flowerE'),
-		( (select Profile_ID from dbo.PlantProfile where Profile_ID = 7),'flowerF'),
-		( (select Profile_ID from dbo.PlantProfile where Profile_ID = 8),'flowerG')
-
-select * from Plant;
----------------------------------Device--------------------------------------
 
 create table PlantData (
 Data_ID int identity(1,1) not null primary key,
@@ -86,16 +74,32 @@ Sensor_Value decimal (6,3) not null,
 [TimeStamp] DateTime not null
     foreign key ("Plant_ID") references dbo.Plant ("Plant_ID")
 )
+
+
+---------------------------------Device--------------------------------------
+
+insert into dbo.Plant (Profile_ID,[Device_ID], PlantName)
+values  ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 1),'GWANEUI1','gwan tulip'),
+        ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 2),'ZIADEUI1', 'ziad tulip'),
+        ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 3),'NAYAEUI1', 'naya rose'),
+        ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 4),'NAYAEUI2','naya sunflower'),
+        ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 5),'NAYAEUI3','naya lily'),
+        ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 6),'GWANEUI2','gwan orchids'),
+        ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 7),'ZIADEUI2', 'ziad tulip'),
+        ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 8),'GWANEUI3','gwan rose');
+
+        select * from Plant;
+
 delete from PlantData;
 
 insert into dbo.PlantData(Plant_ID, Sensor_Type, Sensor_Value, [Timestamp])
-    values ( (select Plant_ID from dbo.Plant where Plant_ID = 1) , 'CO2', 120, '2019-11-01 00:00:01.000'),
-	       ( (select Plant_ID from dbo.Plant where Plant_ID = 2), 'Humidity', 1.30, '2019-11-01 00:00:01.000'),
-	       ( (select Plant_ID from dbo.Plant where Plant_ID = 3), 'Temperature' , 25, '2019-11-01 00:00:01.000'),
-           ( (select Plant_ID from dbo.Plant where Plant_ID = 4), 'Light' , 80, '2019-11-01 00:00:01.000'),
-		   ( (select Plant_ID from dbo.Plant where Plant_ID = 5), 'Light' , 30, '2019-11-01 00:00:01.000'),
-		   ( (select Plant_ID from dbo.Plant where Plant_ID = 6), 'CO2' , 150, '2019-11-01 00:00:01.000'),
-		   ( (select Plant_ID from dbo.Plant where Plant_ID = 7), 'Humidity' , 10, '2019-11-01 00:00:01.000'),
-		   ( (select Plant_ID from dbo.Plant where Plant_ID = 8), 'CO2' , 12, '2019-11-01 00:00:01.000')
+    values ( (select Plant_ID from dbo.Plant where Plant_ID = 1) , 'CO2', 120, GETDATE()),
+	       ( (select Plant_ID from dbo.Plant where Plant_ID = 2), 'Humidity', 1.30, GETDATE()),
+	       ( (select Plant_ID from dbo.Plant where Plant_ID = 3), 'Temperature' , 25, getdate()),
+           ( (select Plant_ID from dbo.Plant where Plant_ID = 4), 'Light' , 80, GETDATE()),
+		   ( (select Plant_ID from dbo.Plant where Plant_ID = 5), 'Light' , 30, GETDATE()),
+		   ( (select Plant_ID from dbo.Plant where Plant_ID = 6), 'CO2' , 150, GETDATE()),
+		   ( (select Plant_ID from dbo.Plant where Plant_ID = 7), 'Humidity' , 10, GETDATE()),
+		   ( (select Plant_ID from dbo.Plant where Plant_ID = 8), 'CO2' , 12,GETDATE())
 
 select * from PlantData;
