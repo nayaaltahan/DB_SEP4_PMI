@@ -160,7 +160,7 @@ select * from Stage_Fact_CO2
 -----------------------------------------------------------------------------------------------------------
 
 
-
+--drop table Stage_Fact_Hum
 create table Stage_Fact_Hum (
 Su_Plant_ID int null,   ---- surrogate key
 Su_Profile_ID int null,   ---- surrogate key
@@ -172,16 +172,18 @@ Profile_ID int null,
 User_ID Varchar(50) null,
 [Date] DATE null,
 [Time] TIME null,
-[Sensor_Value] decimal(3,3) null,
+[Sensor_Value] decimal(6,3) null,
 Hum_Status varchar(50) null
 )
 
 insert into Stage_Fact_Hum (Plant_ID, Profile_ID, [Date], User_ID , [Time], [Sensor_Value] , Hum_Status)
                                            
-select PlantData.ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantData.timestamp, 111), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),
-                                                    case
+select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users.[User_ID]
+       ,FORMAT([TimeStamp],'HH:mm')
+       ,PlantData.Sensor_Value,
+       case
 													when Sensor_Value < Hum_Min then 'Humidity value is low'
-													when Sensor_Value > Hum_Min and Sensor_Value < Hum_Max then 'Humidity value is low'
+													when Sensor_Value > Hum_Min and Sensor_Value < Hum_Max then 'Humidity value is normal'
                                                     when Sensor_Value > Hum_Max then 'Humidity value is high'
 										            end as Hum_Status  
 
@@ -195,7 +197,7 @@ select * from Stage_Fact_Hum
 --drop table Stage_Fact_Hum
 -----------------------------------------------------------------------------------------------------
 
-
+--drop table Stage_Fact_Light
 create table Stage_Fact_Light (
 Su_Plant_ID int null,   ---- surrogate key
 Su_Profile_ID int null,   ---- surrogate key
@@ -205,20 +207,21 @@ Su_Timestamp int null,   ---- surrogate key
 Plant_ID int null,
 Profile_ID int null,
 User_ID Varchar(50) null,
-[Date] int null,
-[Time] DateTime null,
-[Sensor_Value] decimal(3,3) null,
+[Date] Date null,
+[Time] TIME null,
+[Sensor_Value] decimal(6,3) null,
 Light_Status varchar(50) null
 )
 
 insert into Stage_Fact_Light(Plant_ID, Profile_ID, [Date], User_ID , [Time], [Sensor_Value] , Light_Status)
-                                           
-select PlantData.ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantData.timestamp, 111), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),
-                                                    case
-													when Sensor_Value <Light_Min then 'Light value is low' 
-													when Sensor_Value > Light_Min and Sensor_Value < Light_Max then 'Light value is low'
+
+select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users.[User_ID]
+       ,FORMAT([TimeStamp],'HH:mm')
+       ,PlantData.Sensor_Value,                                                    case
+													when Sensor_Value <Light_Min then 'Light value is low'
+													when Sensor_Value > Light_Min and Sensor_Value < Light_Max then 'Light value is normal'
                                                     when Sensor_Value > Light_Max then 'Light value is high'
-										            end as Light_Status  
+										            end as Light_Status
 
 from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
@@ -231,7 +234,7 @@ select * from Stage_Fact_Light
 
 ---------------------------------------------------------------------------------------------------------------
 
-
+--DROP TABLE Stage_Fact_Tem
 create table Stage_Fact_Tem (
 Su_Plant_ID int null,   ---- surrogate key
 Su_Profile_ID int null,   ---- surrogate key
@@ -241,18 +244,19 @@ Su_Timestamp int null,   ---- surrogate key
 Plant_ID int null,
 Profile_ID int null,
 User_ID Varchar(50) null,
-[Date] int null,
-[Time] DateTime null,
-[Sensor_Value] decimal(3,3) null,
+[Date] DATE null,
+[Time] TIME null,
+[Sensor_Value] decimal(6,3) null,
 Tem_Status varchar(50) null
 )
 
 insert into Stage_Fact_Tem (Plant_ID, Profile_ID, [Date], User_ID , [Time], [Sensor_Value] , Tem_Status)
                                            
-select PlantData.ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantData.timestamp, 111), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),
-												    case 
+select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users.[User_ID]
+       ,FORMAT([TimeStamp],'HH:mm')
+       ,PlantData.Sensor_Value,												    case
 													when Sensor_Value <Tem_Min then 'temperature value is low' 
-													when Sensor_Value > Tem_Min and Sensor_Value < Tem_Max then 'Temperature value is low'
+													when Sensor_Value > Tem_Min and Sensor_Value < Tem_Max then 'Temperature value is normal'
                                                     when Sensor_Value > Tem_Max then 'Temperature value is high'
 										            end as Tem_Status    
 
