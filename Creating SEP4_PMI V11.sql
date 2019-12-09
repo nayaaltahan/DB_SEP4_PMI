@@ -1,7 +1,7 @@
 -----------------------------Creating source tables-------------------------------------
-create database SEP4_PMI
+--create database SEP4_PMI
 
-use SEP4_PMI   
+use SEP4_PMI  ;
 
 drop table if exists [Users]
 drop table if exists PlantProfile
@@ -13,7 +13,7 @@ create table Users (
 [User_ID] int identity (1, 1) not null primary key,
 [Email] varchar(50) not null unique,
 [Password] varchar (50) not null
-)
+);
 
 insert into dbo.Users (
 [Email],
@@ -65,19 +65,6 @@ PlantName varchar(50) null
 foreign key ("Profile_ID")   references dbo.PlantProfile ("Profile_ID")
 )
 
-
-create table PlantData (
-Data_ID int identity(1,1) not null primary key,
-Plant_ID int not null,
-Sensor_Type varchar (50) null,
-Sensor_Value decimal (6,3) not null,
-[TimeStamp] DateTime not null
-    foreign key ("Plant_ID") references dbo.Plant ("Plant_ID")
-)
-
-
----------------------------------Device--------------------------------------
-
 insert into dbo.Plant (Profile_ID,[Device_ID], PlantName)
 values  ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 1),'GWANEUI1','gwan tulip'),
         ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 2),'ZIADEUI1', 'ziad tulip'),
@@ -89,6 +76,21 @@ values  ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 1),'GWANEU
         ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 8),'GWANEUI3','gwan rose');
 
         select * from Plant;
+
+
+
+
+
+---------------------------------PLANT DATA--------------------------------------
+
+create table PlantData (
+Data_ID int identity(1,1) not null primary key,
+Plant_ID int not null,
+Sensor_Type varchar (50) null,
+Sensor_Value decimal (6,3) not null,
+[TimeStamp] DateTime not null
+    foreign key ("Plant_ID") references dbo.Plant ("Plant_ID")
+)
 
 delete from PlantData;
 

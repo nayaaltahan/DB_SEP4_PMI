@@ -92,7 +92,7 @@ select * from stage_dim_Calendar
 
 CREATE TABLE stage_dim_Time
 (
-[Time] TIME null,
+[Time] TIME null, --changed to not null -- should be id
 )
 
 --Filling up stage_dim_calendar with dates
@@ -119,7 +119,7 @@ INSERT INTO [stage_dim_Time] (Time) values (TIMEFROMPARTS(23,59,00,0,1));
 select top 200 * from stage_dim_Time order by Time desc ;
 drop table if exists stage_dim_Time;
 -------------------------------------------------------------------------------------------
-
+drop table if exists Stage_Fact_CO2;
 
 create table Stage_Fact_CO2 (
 Su_Plant_ID int null,   ---- surrogate key
@@ -132,16 +132,16 @@ Profile_ID int null,
 [Date] DATE null,
 [Time] Time null,
 User_ID Varchar(50) null,
-[Sensor_Value] decimal(3,3) null,
+[Sensor_Value] decimal(6,3) null,
 CO2_Status varchar(50) null
 )
 
 insert into Stage_Fact_CO2 (Plant_ID, Profile_ID, [Date] , User_ID , [Time], [Sensor_Value] , CO2_Status)
                                            
-select Plant.Plant_ID, PlantProfile.Profile_ID, CAST(PlantData.[TimeStamp] AS DATE), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),PlantData.Sensor_Value,
+select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users.[User_ID],  CAST([TimeStamp] AS TIME),PlantData.Sensor_Value,
 													case 
 													when Sensor_Value < CO2_Min then 'CO2 value is low'
-													when Sensor_Value > CO2_Min and Sensor_Value < CO2_Max then 'CO2 value is low'
+													when Sensor_Value > CO2_Min and Sensor_Value < CO2_Max then 'CO2 value is normal'
                                                     when Sensor_Value > CO2_Max then 'CO2 value is high'
 										            end as CO2_Status   
 
@@ -151,6 +151,7 @@ join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
 where PlantData.Sensor_Type = 'CO2'
 
+delete from Stage_Fact_CO2;
 --drop table Stage_Fact_CO2
 select * from Stage_Fact_CO2
 
@@ -177,7 +178,7 @@ insert into Stage_Fact_Hum (Plant_ID, Profile_ID, [Date], User_ID , [Time], [Sen
                                            
 select PlantData.ID, Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantData.timestamp, 111), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),
                                                     case
-													when Sensor_Value <Hum_Min then 'Humidity value is low' 
+													when Sensor_Value < Hum_Min then 'Humidity value is low'
 													when Sensor_Value > Hum_Min and Sensor_Value < Hum_Max then 'Humidity value is low'
                                                     when Sensor_Value > Hum_Max then 'Humidity value is high'
 										            end as Hum_Status  
