@@ -138,7 +138,9 @@ CO2_Status varchar(50) null
 
 insert into Stage_Fact_CO2 (Plant_ID, Profile_ID, [Date] , User_ID , [Time], [Sensor_Value] , CO2_Status)
                                            
-select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users.[User_ID],  CAST([TimeStamp] AS TIME),PlantData.Sensor_Value,
+select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users.[User_ID]
+       ,FORMAT([TimeStamp],'HH:mm')
+       ,PlantData.Sensor_Value,
 													case 
 													when Sensor_Value < CO2_Min then 'CO2 value is low'
 													when Sensor_Value > CO2_Min and Sensor_Value < CO2_Max then 'CO2 value is normal'
