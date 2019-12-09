@@ -1,5 +1,7 @@
 create database Stage_SEP4_PMI
 
+drop database Stage_SEP4_PMI
+
 use Stage_SEP4_PMI 
 
 --drop table if exists stage_dim_Users
@@ -39,11 +41,12 @@ select * from stage_dim_PlantProfile
 ---------------------------------------------------------------
 create table stage_dim_Plant (
 Plant_ID int null,
+[Device_ID] varchar(50) null,
 Plant_Name varchar(50) null
 )
 
-insert into stage_dim_Plant (Plant_ID, Plant_Name)
-select Plant_ID, PlantName
+insert into stage_dim_Plant (Plant_ID,[Device_ID], Plant_Name)
+select Plant_ID, [Device_ID], PlantName
 from SEP4_PMI.dbo.Plant
 
 
@@ -51,7 +54,7 @@ select * from stage_dim_Plant
 
 ----------------------------------------------------------- 
 
-drop table stage_dim_Calendar
+drop table if exists stage_dim_Calendar
 
 CREATE TABLE stage_dim_Calendar
 (
@@ -97,9 +100,9 @@ GO
 DECLARE @StartTime TIME
 DECLARE @EndTime TIME
 SET @StartTime = TIMEFROMPARTS(0,0,0,0,1)
-SET @EndTime = TIMEFROMPARTS(23,59,59,0,1)
+SET @EndTime = DATEADD(mi, 1439, @StartTime)
 
-WHILE @StartTime <= @EndTime
+WHILE @StartTime < @EndTime
 	BEGIN
 		INSERT INTO [stage_dim_Time]
 		(
@@ -107,13 +110,14 @@ WHILE @StartTime <= @EndTime
 		)
 		SELECT @StartTime
 
-		SET @StartTime = DATEADD (ss,1, @StartTime)
+		SET @StartTime = DATEADD (mi,1, @StartTime)
 	END
+INSERT INTO [stage_dim_Time] (Time) values (TIMEFROMPARTS(23,59,00,0,1));
 
 
 
-select * from stage_dim_Time
-
+select top 200 * from stage_dim_Time order by Time desc ;
+drop table if exists stage_dim_Time;
 -------------------------------------------------------------------------------------------
 
 
@@ -134,7 +138,7 @@ CO2_Status varchar(50) null
 
 insert into Stage_Fact_CO2 (Plant_ID, Profile_ID, [Date] , User_ID , [Time], [Sensor_Value] , CO2_Status)
                                            
-select Plant.Plant_ID, PlantProfile.Profile_ID, CONVERT(VARCHAR(10), PlantData.timestamp, 111), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),PlantData.Sensor_Value,
+select Plant.Plant_ID, PlantProfile.Profile_ID, CAST(PlantData.[TimeStamp] AS DATE), Users.[User_ID],  CAST(PlantData.[TimeStamp] AS TIME),PlantData.Sensor_Value,
 													case 
 													when Sensor_Value < CO2_Min then 'CO2 value is low'
 													when Sensor_Value > CO2_Min and Sensor_Value < CO2_Max then 'CO2 value is low'
