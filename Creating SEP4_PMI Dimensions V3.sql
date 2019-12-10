@@ -57,18 +57,19 @@ select * from Dim_Time;
 --DROP TABLE Dim_Time;
 --**************************************Dim_PlantProfile********************************--
 
+DROP TABLE IF EXISTS Dim_PlantProfile;
 CREATE TABLE dbo.Dim_PlantProfile(
 	Su_Profile_ID int identity (1,1) not null primary key, ---surrogate key
 	Profile_ID int				     not null,             ---refers to the PlantProfile in the business database
 	Profile_Name varchar(50)		 not null,
-	CO2_Max decimal(6,3)			 not null,
-	CO2_Min decimal(6,3)			 not null,
-	Hum_Max decimal(6,3)			 not null,
-	Hum_Min decimal(6,3)			 not null,
-	Tem_Max decimal(6,3)			 not null,
-	Tem_Min decimal(6,3)			 not null,
-	Light_Max decimal(6,3)		 not null,
-	Light_Min decimal(6,3)		 not null,
+	CO2_Max decimal			 not null,
+	CO2_Min decimal			 not null,
+	Hum_Max decimal			 not null,
+	Hum_Min decimal 		 not null,
+	Tem_Max decimal			 not null,
+	Tem_Min decimal			 not null,
+	Light_Max decimal		 not null,
+	Light_Min decimal		 not null,
     [ValidFrom] DATE                 not null DEFAULT getdate(),
     [ValidTo] DATE                   not null DEFAULT '9999-12-31'
 ) ;
@@ -81,7 +82,9 @@ from Stage_SEP4_PMI.dbo.stage_dim_PlantProfile;
 
 select * from Dim_PlantProfile;
 
+
 --**********************************************DIm_Plant***************************************************--
+DROP Table if exists Dim_Plant;
 create table Dim_Plant (
 	Su_Plant_ID int identity (1,1) not null primary key, ---surrogate key
 	[Plant_ID] int				   not null,             ---refers to the Plant in the business database
