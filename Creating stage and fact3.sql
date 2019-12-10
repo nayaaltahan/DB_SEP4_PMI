@@ -1,8 +1,8 @@
-create database Stage_SEP4_PMI
+create database Stage_SEP4_PMI;
 
-drop database Stage_SEP4_PMI
+drop database Stage_SEP4_PMI;
 
-use Stage_SEP4_PMI 
+use Stage_SEP4_PMI ;
 
 --drop table if exists stage_dim_Users
 
@@ -11,12 +11,12 @@ use Stage_SEP4_PMI
 create table stage_dim_Users (
     [User_ID] int NULL,
     [Email] varchar(50) NULL ,
-)
+);
 
 insert into stage_dim_Users(User_ID, Email)
-select [User_ID], email from SEP4_PMI.dbo.Users
+select [User_ID], email from SEP4_PMI.dbo.Users;
 
-select * from stage_dim_Users
+select * from stage_dim_Users;
 
 ----------------------------------------------------
 create table stage_dim_PlantProfile (
@@ -30,38 +30,39 @@ Tem_Max decimal null,
 Tem_Min decimal null,
 Light_Max decimal null,
 Light_Min decimal null
-)
+);
 
 insert into stage_dim_PlantProfile (Profile_ID, Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max , Light_Min)
 select                            Profile_ID, Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max ,Light_Min
-from SEP4_PMI.dbo.PlantProfile
+from SEP4_PMI.dbo.PlantProfile;
+
 
 --drop table if exists stage_dim_PlantProfile
-select * from stage_dim_PlantProfile
+select * from stage_dim_PlantProfile;
 ---------------------------------------------------------------
 create table stage_dim_Plant (
 Plant_ID int null,
 [Device_ID] varchar(50) null,
 Plant_Name varchar(50) null
-)
+);
 
 insert into stage_dim_Plant (Plant_ID,[Device_ID], Plant_Name)
 select Plant_ID, [Device_ID], PlantName
-from SEP4_PMI.dbo.Plant
+from SEP4_PMI.dbo.Plant;
 
 
-select * from stage_dim_Plant
+select * from stage_dim_Plant;
 
 ----------------------------------------------------------- 
 
-drop table if exists stage_dim_Calendar
+drop table if exists stage_dim_Calendar;
 
 CREATE TABLE stage_dim_Calendar
 (
 [CalendarDate] DATE null,
 WeekDayName nvarchar(50) null,
 MonthName nvarchar(50) null,
-)
+);
 
 --Filling up stage_dim_calendar with dates
 GO
@@ -87,13 +88,13 @@ WHILE @StartDate <= @EndDate
 
 
 
-select * from stage_dim_Calendar
+select * from stage_dim_Calendar;
 
 
 CREATE TABLE stage_dim_Time
 (
 [Time] TIME null, --changed to not null -- should be id
-)
+);
 
 --Filling up stage_dim_calendar with dates
 GO
@@ -116,25 +117,28 @@ INSERT INTO [stage_dim_Time] (Time) values (TIMEFROMPARTS(23,59,00,0,1));
 
 
 
-select top 200 * from stage_dim_Time order by Time desc ;
+select * from stage_dim_Time  ;
 drop table if exists stage_dim_Time;
 -------------------------------------------------------------------------------------------
 drop table if exists Stage_Fact_CO2;
 
-create table Stage_Fact_CO2 (
-Su_Plant_ID int null,   ---- surrogate key
-Su_Profile_ID int null,   ---- surrogate key
-Su_User_ID varchar(50) null, ---- surrogate key
-Su_Date int null,   ---- surrogate key
-Su_Time int null,   ---- surrogate key
-Plant_ID int null,
-Profile_ID int null,
-[Date] DATE null,
-[Time] Time null,
-User_ID Varchar(50) null,
-[Sensor_Value] decimal(6,3) null,
-CO2_Status varchar(50) null
-)
+create table Stage_Fact_CO2
+(
+	Su_Plant_ID int,
+	Su_Profile_ID int,
+	Su_User_ID int,
+	Su_Date_ID int,
+	Su_Time_ID int,
+	Plant_ID int,
+	Profile_ID int,
+	User_ID int,
+	Time Time,
+	Date DATE,
+	Sensor_Value decimal(6,3),
+	CO2_Status varchar(50)
+);
+
+
 
 insert into Stage_Fact_CO2 (Plant_ID, Profile_ID, [Date] , User_ID , [Time], [Sensor_Value] , CO2_Status)
                                            
@@ -151,30 +155,31 @@ from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
 join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantData.Sensor_Type = 'CO2'
+where PlantData.Sensor_Type = 'CO2';
 
 delete from Stage_Fact_CO2;
 --drop table Stage_Fact_CO2
-select * from Stage_Fact_CO2
+select * from Stage_Fact_CO2;
 
 -----------------------------------------------------------------------------------------------------------
 
 
---drop table Stage_Fact_Hum
-create table Stage_Fact_Hum (
-Su_Plant_ID int null,   ---- surrogate key
-Su_Profile_ID int null,   ---- surrogate key
-Su_User_ID varchar(50) null, ---- surrogate key
-Su_CalendarDate int null,   ---- surrogate key
-Su_Timestamp int null,   ---- surrogate key
-Plant_ID int null,
-Profile_ID int null,
-User_ID Varchar(50) null,
-[Date] DATE null,
-[Time] TIME null,
-[Sensor_Value] decimal(6,3) null,
-Hum_Status varchar(50) null
-)
+drop table if exists Stage_Fact_Hum;
+create table Stage_Fact_Hum
+(
+	Su_Plant_ID int,
+	Su_Profile_ID int,
+	Su_User_ID int,
+	Su_Date_ID int,
+	Su_Time_ID int,
+	Plant_ID int,
+	Profile_ID int,
+	User_ID int,
+	Date DATE,
+	Time TIME,
+	Sensor_Value decimal(6,3),
+	Hum_Status varchar(50)
+);
 
 insert into Stage_Fact_Hum (Plant_ID, Profile_ID, [Date], User_ID , [Time], [Sensor_Value] , Hum_Status)
                                            
@@ -191,27 +196,29 @@ from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
 join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantData.Sensor_Type = 'Humidity'
+where PlantData.Sensor_Type = 'Humidity';
 
-select * from Stage_Fact_Hum
+select * from Stage_Fact_Hum;
 --drop table Stage_Fact_Hum
 -----------------------------------------------------------------------------------------------------
 
---drop table Stage_Fact_Light
-create table Stage_Fact_Light (
-Su_Plant_ID int null,   ---- surrogate key
-Su_Profile_ID int null,   ---- surrogate key
-Su_User_ID varchar(50) null, ---- surrogate key
-Su_CalendarDate int null,   ---- surrogate key
-Su_Timestamp int null,   ---- surrogate key
-Plant_ID int null,
-Profile_ID int null,
-User_ID Varchar(50) null,
-[Date] Date null,
-[Time] TIME null,
-[Sensor_Value] decimal(6,3) null,
-Light_Status varchar(50) null
-)
+drop table if exists Stage_Fact_Light;
+create table Stage_Fact_Light
+(
+	Su_Plant_ID int,
+	Su_Profile_ID int,
+	Su_User_ID int,
+	Su_Date_ID int,
+	Su_Time_ID int,
+	Plant_ID int,
+	Profile_ID int,
+	User_ID int,
+	Date Date,
+	Time TIME,
+	Sensor_Value decimal(6,3),
+	Light_Status varchar(50)
+);
+
 
 insert into Stage_Fact_Light(Plant_ID, Profile_ID, [Date], User_ID , [Time], [Sensor_Value] , Light_Status)
 
@@ -227,28 +234,30 @@ from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
 join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantData.Sensor_Type = 'Light'
+where PlantData.Sensor_Type = 'Light';
 
-select * from Stage_Fact_Light
+select * from Stage_Fact_Light;
 --drop table Stage_Fact_Light
 
 ---------------------------------------------------------------------------------------------------------------
 
---DROP TABLE Stage_Fact_Tem
-create table Stage_Fact_Tem (
-Su_Plant_ID int null,   ---- surrogate key
-Su_Profile_ID int null,   ---- surrogate key
-Su_User_ID varchar(50) null, ---- surrogate key
-Su_CalendarDate int null,   ---- surrogate key
-Su_Timestamp int null,   ---- surrogate key
-Plant_ID int null,
-Profile_ID int null,
-User_ID Varchar(50) null,
-[Date] DATE null,
-[Time] TIME null,
-[Sensor_Value] decimal(6,3) null,
-Tem_Status varchar(50) null
-)
+DROP TABLE IF EXISTS Stage_Fact_Tem;
+create table Stage_Fact_Tem
+(
+	Su_Plant_ID int,
+	Su_Profile_ID int,
+	Su_User_ID int,
+	Su_Date_ID int,
+	Su_Time_ID int,
+	Plant_ID int,
+	Profile_ID int,
+	User_ID int,
+	Date DATE,
+	Time TIME,
+	Sensor_Value decimal(6,3),
+	Tem_Status varchar(50)
+);
+
 
 insert into Stage_Fact_Tem (Plant_ID, Profile_ID, [Date], User_ID , [Time], [Sensor_Value] , Tem_Status)
                                            
@@ -264,7 +273,6 @@ from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
 join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantData.Sensor_Type = 'Temperature'
+where PlantData.Sensor_Type = 'Temperature';
 
-select * from Stage_Fact_Tem
---drop table Stage_Fact_Tem
+select * from Stage_Fact_Tem;
