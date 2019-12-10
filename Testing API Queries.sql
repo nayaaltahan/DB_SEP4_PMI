@@ -19,7 +19,7 @@ select PP.Profile_Id, PP.Profile_Name,
             right join SEP4_PMI.dbo.[Users] u on PP.[User_ID] = u.[User_ID]
             where Email = 'naya7777@gmail.com';
 
-SELECT [User_ID] FROM SEP4_PMI.dbo.[Users] WHERE Email='naya7777@gmail.com';
+SELECT [User_ID] FROM SEP4_PMI.dbo.[Users] WHERE Email='h@gmail.com';
 
 insert into SEP4_PMI.dbo.PlantProfile (User_ID, Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max, Light_Min)
 values ((SELECT [User_ID] FROM SEP4_PMI.dbo.[Users] WHERE Email=?), ? , ?, ?, ?, ?, ?, ?, ? ,?);
