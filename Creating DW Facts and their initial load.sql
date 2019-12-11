@@ -13,8 +13,8 @@ create table Dim_Fact_CO2 (
 Su_Plant_ID int			not null,   ---- surrogate key
 Su_Profile_ID int		not null,   ---- surrogate key
 Su_Date_ID  int			not null,   ---- surrogate key
-Su_Time_ID int          not null, --- surrogate key
-Su_User_ID int			not null, ---- surrogate key
+Su_Time_ID int          not null,   ---- surrogate key
+Su_User_ID int			not null,   ---- surrogate key
 Plant_ID int			not null,
 Profile_ID int		    not null,
 User_ID int         	not null,

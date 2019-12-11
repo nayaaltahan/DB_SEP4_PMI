@@ -88,6 +88,7 @@ DROP Table if exists Dim_Plant;
 create table Dim_Plant (
 	Su_Plant_ID int identity (1,1) not null primary key, ---surrogate key
 	[Plant_ID] int				   not null,             ---refers to the Plant in the business database
+	[Device_ID] varchar(50)         not null,
 	[Plant_Name] varchar(50)         not null,
 	[ValidFrom] DATE                 not null DEFAULT getdate(),
     [ValidTo] DATE                   not null DEFAULT '9999-12-31'
@@ -95,8 +96,8 @@ create table Dim_Plant (
 
 -- loading data from the staging area to the warehouse
 
-insert into Dim_Plant (Plant_ID, Plant_Name)
-select Plant_ID, Plant_Name
+insert into Dim_Plant (Plant_ID, Plant_Name, [Device_ID])
+select Plant_ID, Plant_Name, [Device_ID]
 from Stage_SEP4_PMI.dbo.stage_dim_Plant;
 
 select * from Dim_Plant;
