@@ -2,6 +2,13 @@
 --**********************************************Dim_Fact_CO2***************************************************--
 use Dim_SEP4_PMI;
 
+DROP TABLE IF EXISTS Dim_Fact_CO2;
+DROP TABLE IF EXISTS Dim_Fact_Hum;
+DROP TABLE IF EXISTS Dim_Fact_Light;
+DROP TABLE IF EXISTS Dim_Fact_Tem;
+
+
+
 create table Dim_Fact_CO2 (
 Su_Plant_ID int			not null,   ---- surrogate key
 Su_Profile_ID int		not null,   ---- surrogate key
@@ -40,6 +47,8 @@ select Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID,
 
 from Stage_SEP4_PMI.dbo.Stage_Fact_CO2;
 
+select * from Dim_Fact_CO2;
+
 
 --**********************************************Dim_Fact_Hum***************************************************--
 
@@ -55,7 +64,7 @@ Profile_ID int		    not null,
 User_ID int         	not null,
 [Time] TIME	            not null,
 [Date] DATE	            not null,
-[Sensor_Value] decimal(3,3) null,
+[Sensor_Value] decimal(6,3) null,
 Hum_Status varchar(50)	not null
 constraint "PK_Hum" primary key("Su_Plant_ID", "Su_Profile_ID", "Su_Date_ID", "Su_User_ID", "Su_Time_ID")
 
@@ -81,6 +90,9 @@ select Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID,
 
 from Stage_SEP4_PMI.dbo.Stage_Fact_Hum;
 
+SELECT * FROM Dim_Fact_Hum;
+
+
 --**********************************************Dim_Fact_Light***************************************************--
 
 
@@ -95,7 +107,7 @@ Profile_ID int		    not null,
 User_ID int         	not null,
 [Time] TIME	            not null,
 [Date] DATE	            not null,
-[Sensor_Value] decimal(3,3) null,
+[Sensor_Value] decimal(6,3) null,
 Light_Status varchar(50)not null
 constraint "PK_Light" primary key("Su_Plant_ID", "Su_Profile_ID", "Su_Date_ID", "Su_User_ID", "Su_Time_ID")
 
@@ -111,9 +123,8 @@ constraint "Su_User_ID_Light" foreign key("Su_User_ID")references "Dim_Users"("S
 
 );
 
-select * from Dim_Fact_Light
 
----Populate Stage CO2 facts table
+---Populate Stage LIGHT facts table
 
 insert into Dim_Fact_Light(Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID ,Plant_ID, Profile_ID,
                                      User_ID, [Date],[Time], Sensor_Value,Light_Status)
@@ -122,6 +133,9 @@ select Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID,
              Plant_ID, Profile_ID, User_ID ,[Date], [Time], Sensor_Value, Light_Status
 
 from Stage_SEP4_PMI.dbo.Stage_Fact_Light;
+
+select * from Dim_Fact_Light;
+
 
 --**********************************************Dim_Fact_Tem***************************************************--
 
@@ -136,7 +150,7 @@ Profile_ID int		    not null,
 User_ID int         	not null,
 [Time] TIME	            not null,
 [Date] DATE	            not null,
-[Sensor_Value] decimal(3,3) null,
+[Sensor_Value] decimal(6,3) null,
 Tem_Status varchar(50)not null
 constraint "PK_Tem" primary key("Su_Plant_ID", "Su_Profile_ID", "Su_Date_ID", "Su_User_ID", "Su_Time_ID")
 
@@ -152,9 +166,8 @@ constraint "Su_User_ID_Tem" foreign key("Su_User_ID")references "Dim_Users"("Su_
 
 );
 
-select * from Dim_Fact_Tem
 
----Populate Stage CO2 facts table
+---Populate Stage TEM facts table
 
 insert into Dim_Fact_Tem(Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID ,Plant_ID, Profile_ID,
                                      User_ID, [Date],[Time], Sensor_Value,Tem_Status)
@@ -163,3 +176,5 @@ select Su_Plant_ID, Su_Profile_ID, Su_Date_ID ,Su_Time_ID, Su_User_ID,
              Plant_ID, Profile_ID, User_ID ,[Date], [Time], Sensor_Value, Tem_Status
 
 from Stage_SEP4_PMI.dbo.Stage_Fact_tem;
+
+select * from Dim_Fact_Tem;
