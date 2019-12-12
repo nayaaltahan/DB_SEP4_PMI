@@ -1,8 +1,7 @@
 create database Stage_SEP4_PMI;
 
-drop database Stage_SEP4_PMI;
-
 use Stage_SEP4_PMI ;
+
 
 --drop table if exists stage_dim_Users
 
@@ -90,6 +89,7 @@ WHILE @StartDate <= @EndDate
 
 select * from stage_dim_Calendar;
 
+drop table if exists stage_dim_Time;
 
 CREATE TABLE stage_dim_Time
 (
@@ -118,7 +118,6 @@ INSERT INTO [stage_dim_Time] (Time) values (TIMEFROMPARTS(23,59,00,0,1));
 
 
 select * from stage_dim_Time  ;
-drop table if exists stage_dim_Time;
 -------------------------------------------------------------------------------------------
 
 ---create junk dimension to hold the values of the fact status (low, normal, high)
