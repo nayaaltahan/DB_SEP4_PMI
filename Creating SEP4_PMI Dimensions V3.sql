@@ -62,14 +62,14 @@ CREATE TABLE dbo.Dim_PlantProfile(
 	Su_Profile_ID int identity (1,1) not null primary key, ---surrogate key
 	Profile_ID int				     not null,             ---refers to the PlantProfile in the business database
 	Profile_Name varchar(50)		 not null,
-	CO2_Max decimal			 not null,
-	CO2_Min decimal			 not null,
-	Hum_Max decimal			 not null,
-	Hum_Min decimal 		 not null,
-	Tem_Max decimal			 not null,
-	Tem_Min decimal			 not null,
-	Light_Max decimal		 not null,
-	Light_Min decimal		 not null,
+	CO2_Max decimal			         not null,
+	CO2_Min decimal			         not null,
+	Hum_Max decimal			         not null,
+	Hum_Min decimal 		         not null,
+	Tem_Max decimal			         not null,
+	Tem_Min decimal			         not null,
+	Light_Max decimal		         not null,
+	Light_Min decimal		         not null,
     [ValidFrom] DATE                 not null DEFAULT getdate(),
     [ValidTo] DATE                   not null DEFAULT '9999-12-31'
 ) ;
@@ -101,3 +101,18 @@ select Plant_ID, Plant_Name, [Device_ID]
 from Stage_SEP4_PMI.dbo.stage_dim_Plant;
 
 select * from Dim_Plant;
+
+---Creating status junk table holding the status values
+
+drop table if exists status_junk_dim;
+
+create table status_junk_dim (
+    status_id int primary key ,
+    status_value varchar(50)
+);
+
+insert into status_junk_dim (status_id, status_value)
+select status_id,status_value
+from Stage_SEP4_PMI.dbo.stage_status_dim;
+
+SELECT * FROM status_junk_dim;
