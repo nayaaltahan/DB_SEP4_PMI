@@ -4,6 +4,8 @@ create database Dim_SEP4_PMI;
 use Dim_SEP4_PMI;
 
 --**************************************Dim_Users***********************************--
+DROP TABLE IF EXISTS Dim_Users;
+
 create table Dim_Users (
 Su_User_ID int identity(1,1) not null primary key,
 User_ID int not null,
@@ -22,6 +24,8 @@ from Stage_SEP4_PMI.dbo.stage_dim_Users;
 select * from Dim_Users;
 --**************************************Dim_Date_Calendar******************************--
 
+DROP TABLE IF EXISTS Dim_Calendar;
+
 create table Dim_Calendar
 (
  Su_Date_ID int identity (1, 1) NOT NULL primary key,
@@ -35,16 +39,18 @@ create table Dim_Calendar
 
 insert into Dim_Calendar ([CalendarDate], WeekDayName,  MonthName)
 select [CalendarDate], WeekDayName, MonthName
-from Stage_SEP4_PMI.dbo.stage_dim_Calendar
+from Stage_SEP4_PMI.dbo.stage_dim_Calendar;
 
 select * from Dim_Calendar;
 --**************************************Dim_Time******************************--
+
+DROP TABLE IF EXISTS Dim_Time;
 
 create table Dim_Time
 (
  Su_Time_ID int identity (1, 1) NOT NULL primary key,
  [Time] TIME
-)
+);
 
 
 -- loading data from the staging area to the warehouse
@@ -54,7 +60,6 @@ select [Time]
 from Stage_SEP4_PMI.dbo.stage_dim_Time;
 
 select * from Dim_Time;
---DROP TABLE Dim_Time;
 --**************************************Dim_PlantProfile********************************--
 
 DROP TABLE IF EXISTS Dim_PlantProfile;
