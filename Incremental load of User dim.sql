@@ -1,6 +1,6 @@
 USE SEP4_PMI
-Delete From Users where User_ID = 4
-select * from Users
+--Delete From Users where User_ID = 4
+--select * from Users
 --Finding deleted rows
 Select *
 From [Dim_SEP4_PMI].dbo.Dim_Users
@@ -34,9 +34,9 @@ From [Dim_SEP4_PMI].dbo.Dim_Users
 )
 )
 
-UPDATE Users
-SET  Email= 'ziadnew@gmail.com'
-WHERE User_ID = 6;
+--UPDATE Users
+--SET  Email= 'jwan777@gmail.com'
+--WHERE User_ID = 1;
 --Finding changed rows
 --- today
 go
