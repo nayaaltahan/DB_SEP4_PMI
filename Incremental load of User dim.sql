@@ -1,6 +1,6 @@
 USE SEP4_PMI
 --Delete From Users where User_ID = 4
---select * from Users
+select * from Users
 --Finding deleted rows
 Select *
 From [Dim_SEP4_PMI].dbo.Dim_Users
