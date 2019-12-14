@@ -3,6 +3,7 @@ create database Dim_SEP4_PMI;
 
 use Dim_SEP4_PMI;
 
+
 --**************************************Dim_Users***********************************--
 DROP TABLE IF EXISTS Dim_Users;
 

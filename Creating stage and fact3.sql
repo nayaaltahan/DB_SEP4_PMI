@@ -3,7 +3,16 @@ create database Stage_SEP4_PMI;
 use Stage_SEP4_PMI ;
 
 
---drop table if exists stage_dim_Users
+drop table if exists stage_dim_Users;
+drop TABLE if exists stage_dim_Plant;
+drop table if exists stage_dim_Time;
+drop TABLE if exists stage_dim_Calendar;
+drop table if exists stage_dim_PlantProfile;
+drop TABLE if exists Stage_Fact_Tem;
+drop table if exists Stage_Fact_Light;
+drop TABLE if exists Stage_Fact_Hum;
+drop table if exists Stage_Fact_CO2;
+drop table if exists stage_status_dim;
 
 ----Extracting user data from source 
 
@@ -277,7 +286,7 @@ insert into Stage_Fact_Tem (Plant_ID, Profile_ID, [Date], User_ID , [Time], [Sen
 select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users.[User_ID]
        ,FORMAT([TimeStamp],'HH:mm')
        ,PlantData.Sensor_Value,												    case
-													when Sensor_Value <Tem_Min then 1
+													when Sensor_Value < Tem_Min then 1
 													when Sensor_Value > Tem_Min and Sensor_Value < Tem_Max then 2
                                                     when Sensor_Value > Tem_Max then 3
 										            end as Tem_Status
