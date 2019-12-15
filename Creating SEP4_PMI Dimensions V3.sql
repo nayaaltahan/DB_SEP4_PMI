@@ -68,21 +68,13 @@ CREATE TABLE dbo.Dim_PlantProfile(
 	Su_Profile_ID int identity (1,1) not null primary key, ---surrogate key
 	Profile_ID int				     not null,             ---refers to the PlantProfile in the business database
 	Profile_Name varchar(50)		 not null,
-	CO2_Max decimal			         not null,
-	CO2_Min decimal			         not null,
-	Hum_Max decimal			         not null,
-	Hum_Min decimal 		         not null,
-	Tem_Max decimal			         not null,
-	Tem_Min decimal			         not null,
-	Light_Max decimal		         not null,
-	Light_Min decimal		         not null,
     [ValidFrom] DATE                 not null DEFAULT getdate(),
     [ValidTo] DATE                   not null DEFAULT '9999-12-31'
 ) ;
 
 -- loading data from the staging area to the warehouse
 
-insert into Dim_PlantProfile (Profile_ID, Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max, Light_Min)
+insert into Dim_PlantProfile (Profile_ID, Profile_Name)
 select Profile_ID, Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max, Light_Min
 from Stage_SEP4_PMI.dbo.stage_dim_PlantProfile;
 
