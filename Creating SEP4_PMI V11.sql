@@ -1,12 +1,12 @@
 -----------------------------Creating source tables-------------------------------------
-create database SEP4_PMI
+create database SEP4_PMI;
 
 use SEP4_PMI;
 
-drop table if exists [Users]
-drop table if exists PlantProfile
-drop table if exists Plant
-drop table if exists PlantData
+drop table if exists PlantData;
+drop table if exists Plant;
+drop table if exists PlantProfile;
+drop table if exists [Users];
 
 ------------------------------------Users Table-----------------------------------------
 create table Users (
@@ -24,8 +24,7 @@ values
 ('ziad7777@gmail.com' , '23456'),
 ('naya7777@gmail.com', '34567')
 
---delete from Users
-select * from SEP4_PMI.dbo.Users
+select * from SEP4_PMI.dbo.Users;
 -----------------------------------PlantProfile-------------------------------
 
 create table PlantProfile (
@@ -40,9 +39,8 @@ Tem_Max decimal not null,
 Tem_Min decimal not null,
 Light_Max decimal not null,
 Light_Min decimal not null
-foreign key ("User_ID")   references dbo.Users ("User_ID")
-)
---delete from PlantProfile
+foreign key ("User_ID")   references dbo.Users ("User_ID") on delete cascade on update cascade
+);
 
 
 insert into PlantProfile ( [User_ID], Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max ,Light_Min)
@@ -55,7 +53,7 @@ values ( (select [User_ID] from dbo.Users where [User_ID] = 1), 'gwan flower 1' 
        ( (select [User_ID] from dbo.Users where [User_ID] = 3), 'naya flower 2' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100),
 	   ( (select [User_ID] from dbo.Users where [User_ID] = 3), 'naya flower 3' , 100, 10, 1.50, 0.25, 32, 0, 1000 ,100)
 
-select * from PlantProfile
+select * from PlantProfile;
 	  
 -----------------------------------Plant--------------------------------------
 
@@ -64,8 +62,8 @@ Plant_ID int identity (1,1) not null primary key,
 Profile_ID int not null,
 [Device_ID] varchar(50) not null,
 PlantName varchar(50) not null
-foreign key ("Profile_ID")   references dbo.PlantProfile ("Profile_ID")
-)
+foreign key ("Profile_ID")   references dbo.PlantProfile ("Profile_ID") on delete cascade on update cascade 
+);
 
 insert into dbo.Plant (Profile_ID,[Device_ID], PlantName)
 values  ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 1),'GWANEUI1','gwan tulip'),
@@ -81,7 +79,6 @@ values  ( (select Profile_ID from dbo.PlantProfile where Profile_ID = 1),'GWANEU
 
 select * from Plant;
 
-delete from Plant
 ---------------------------------PLANT DATA--------------------------------------
 
 create table PlantData (
@@ -90,10 +87,9 @@ Plant_ID int not null,
 Sensor_Type varchar (50) null,
 Sensor_Value decimal (6,3) null,
 [TimeStamp] DateTime not null
-    foreign key ("Plant_ID") references dbo.Plant ("Plant_ID")
-)
+    foreign key ("Plant_ID") references dbo.Plant ("Plant_ID") on delete cascade on update cascade
+);
 
-delete from PlantData;
 --drop table PlantData
 select * from PlantData;
 
@@ -255,4 +251,4 @@ insert into dbo.PlantData(Plant_ID, Sensor_Type, Sensor_Value, [Timestamp])
 
 
 
-select * from PlantData
+select * from PlantData;
