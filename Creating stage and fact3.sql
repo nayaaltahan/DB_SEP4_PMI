@@ -3,7 +3,16 @@ create database Stage_SEP4_PMI;
 use Stage_SEP4_PMI ;
 
 
---drop table if exists stage_dim_Users
+    drop table if exists stage_dim_Users;
+    drop table if exists stage_dim_PlantProfile;
+    drop table if exists stage_dim_Plant;
+    drop table if exists stage_dim_Calendar;
+	drop table if exists stage_dim_Time
+	drop table if exists stage_status_dim
+	drop table if exists Stage_Fact_CO2
+	drop table if exists Stage_Fact_Light
+	drop table if exists Stage_Fact_Hum
+	drop table if exists Stage_Fact_Tem
 
 ----Extracting user data from source 
 
@@ -91,6 +100,7 @@ select * from stage_dim_Calendar;
 
 drop table if exists stage_dim_Time;
 
+------------------------------------------Time----------------------------------------
 CREATE TABLE stage_dim_Time
 (
 [Time] TIME null, --changed to not null -- should be id
@@ -160,16 +170,16 @@ select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users
        ,FORMAT([TimeStamp],'HH:mm')
        ,PlantData.Sensor_Value,
 													case 
-													when Sensor_Value < CO2_Min then 1
+													when Sensor_Value <= CO2_Min then 1
 													when Sensor_Value > CO2_Min and Sensor_Value < CO2_Max then 2
-                                                    when Sensor_Value > CO2_Max then 3
+                                                    when Sensor_Value >= CO2_Max then 3
 										            end as CO2_Status   
 
 from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
 join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantData.Sensor_Type = 'CO2';
+where PlantData.Sensor_Type = 'CO2' AND PlantData.Sensor_Value IS NOT NULL;
 
 --drop table Stage_Fact_CO2
 select * from Stage_Fact_CO2;
@@ -200,16 +210,16 @@ select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users
        ,FORMAT([TimeStamp],'HH:mm')
        ,PlantData.Sensor_Value,
        case
-													when Sensor_Value < Hum_Min then 1
+													when Sensor_Value <= Hum_Min then 1
 													when Sensor_Value > Hum_Min and Sensor_Value < Hum_Max then 2
-                                                    when Sensor_Value > Hum_Max then 3
+                                                    when Sensor_Value >= Hum_Max then 3
 										            end as Hum_Status  
 
 from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
 join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantData.Sensor_Type = 'Humidity';
+where PlantData.Sensor_Type = 'Humidity' AND PlantData.Sensor_Value IS NOT NULL;
 
 select * from Stage_Fact_Hum;
 
@@ -238,16 +248,16 @@ insert into Stage_Fact_Light(Plant_ID, Profile_ID, [Date], User_ID , [Time], [Se
 select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users.[User_ID]
        ,FORMAT([TimeStamp],'HH:mm')
        ,PlantData.Sensor_Value,                                                    case
-													when Sensor_Value <Light_Min then 1
+													when Sensor_Value <= Light_Min then 1
 													when Sensor_Value > Light_Min and Sensor_Value < Light_Max then 2
-                                                    when Sensor_Value > Light_Max then 3
+                                                    when Sensor_Value >= Light_Max then 3
 										            end as Light_Status
 
 from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
 join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantData.Sensor_Type = 'Light';
+where PlantData.Sensor_Type = 'Light' AND PlantData.Sensor_Value IS NOT NULL;
 
 select * from Stage_Fact_Light;
 --drop table Stage_Fact_Light
@@ -255,6 +265,7 @@ select * from Stage_Fact_Light;
 ---------------------------------------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS Stage_Fact_Tem;
+--delete from Stage_Fact_Tem
 create table Stage_Fact_Tem
 (
 	Su_Plant_ID int,
@@ -272,20 +283,20 @@ create table Stage_Fact_Tem
 );
 
 
-insert into Stage_Fact_Tem (Plant_ID, Profile_ID, [Date], User_ID , [Time], [Sensor_Value] , Tem_Status)
+insert into Stage_Fact_Tem (Plant_ID, Profile_ID, [Date], [User_ID] , [Time], [Sensor_Value] , Tem_Status)
 
 select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users.[User_ID]
        ,FORMAT([TimeStamp],'HH:mm')
        ,PlantData.Sensor_Value,												    case
-													when Sensor_Value <Tem_Min then 1
+													when Sensor_Value <= Tem_Min then 1
 													when Sensor_Value > Tem_Min and Sensor_Value < Tem_Max then 2
-                                                    when Sensor_Value > Tem_Max then 3
+                                                    when Sensor_Value >= Tem_Max then 3
 										            end as Tem_Status
 
 from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
 join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantData.Sensor_Type = 'Temperature';
+where PlantData.Sensor_Type = 'Temperature' AND PlantData.Sensor_Value IS NOT NULL;
 
 select * from Stage_Fact_Tem;
