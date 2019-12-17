@@ -103,6 +103,7 @@ drop table if exists stage_dim_Time;
 CREATE TABLE stage_dim_Time
 (
 [Time] TIME null, --changed to not null -- should be id
+[Is_Work_Hours] bit
 );
 
 --Filling up stage_dim_calendar with dates
@@ -116,13 +117,17 @@ WHILE @StartTime < @EndTime
 	BEGIN
 		INSERT INTO [stage_dim_Time]
 		(
-			[Time]
+			[Time], [Is_Work_Hours]
 		)
-		SELECT @StartTime
+		SELECT @StartTime, case
+													when @StartTime < TIMEFROMPARTS(8,0,0,0,1) then 0
+													when @StartTime >= TIMEFROMPARTS(8,0,0,0,1) and @StartTime <= TIMEFROMPARTS(16,0,0,0,1) then 1
+                                                    when @StartTime > TIMEFROMPARTS(16,0,0,0,1) then 0
+										            end as [Is_Work_Hours]
 
 		SET @StartTime = DATEADD (mi,1, @StartTime)
 	END
-INSERT INTO [stage_dim_Time] (Time) values (TIMEFROMPARTS(23,59,00,0,1));
+INSERT INTO [stage_dim_Time] (Time, [Is_Work_Hours]) values (TIMEFROMPARTS(23,59,00,0,1), 0);
 
 
 
