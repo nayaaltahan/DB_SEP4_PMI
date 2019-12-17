@@ -50,14 +50,15 @@ DROP TABLE IF EXISTS Dim_Time;
 create table Dim_Time
 (
  Su_Time_ID int identity (1, 1) NOT NULL primary key,
- [Time] TIME
+ [Time] TIME,
+ [Is_Work_Hours] BIT
 );
 
 
 -- loading data from the staging area to the warehouse
 
-insert into Dim_Time ([Time])
-select [Time]
+insert into Dim_Time ([Time], [Is_Work_Hours])
+select [Time], [Is_Work_Hours]
 from Stage_SEP4_PMI.dbo.stage_dim_Time;
 
 select * from Dim_Time;
