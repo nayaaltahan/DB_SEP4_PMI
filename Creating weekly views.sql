@@ -13,8 +13,8 @@ SELECT Dim_Calendar.WeekDayName as [Weekday], Dim_Calendar.CalendarDate as [Date
 join dbo.Dim_Plant on Dim_Fact_CO2.Su_Plant_ID = Dim_Plant.Su_Plant_ID
 join dbo.Dim_Calendar on Dim_Fact_CO2.Su_Date_ID = Dim_Calendar.Su_Date_ID
 WHERE Dim_Calendar.CalendarDate > DATEADD(dd,-8, getdate()) AND Dim_Calendar.CalendarDate < getdate()
-group by Dim_Calendar.WeekDayName, Dim_Calendar.CalendarDate, Plant_ID, Device_ID, Plant_Name ;
-
+group by Dim_Calendar.WeekDayName, Dim_Calendar.CalendarDate, Plant_ID, Device_ID, Plant_Name
+order by Dim_Calendar.CalendarDate;
 
 SELECT [Weekday],[Date], Plant_ID, Device_ID, Plant_Name, CO2 FROM CO2WeeklyAvgView ;
 
@@ -31,7 +31,8 @@ SELECT Dim_Calendar.WeekDayName as [Weekday], Dim_Calendar.CalendarDate as [Date
 join dbo.Dim_Plant on Dim_Fact_Hum.Su_Plant_ID = Dim_Plant.Su_Plant_ID
 join dbo.Dim_Calendar on Dim_Fact_Hum.Su_Date_ID = Dim_Calendar.Su_Date_ID
 WHERE Dim_Calendar.CalendarDate > DATEADD(dd,-8, getdate()) AND Dim_Calendar.CalendarDate < getdate()
-group by Dim_Calendar.WeekDayName, Dim_Calendar.CalendarDate, Plant_ID, Device_ID, Plant_Name ;
+group by Dim_Calendar.WeekDayName, Dim_Calendar.CalendarDate, Plant_ID, Device_ID, Plant_Name
+order by Dim_Calendar.CalendarDate;
 
 
 SELECT [Weekday],[Date], Plant_ID, Device_ID, Plant_Name, Humidity FROM HumWeeklyAvgView ;
@@ -51,7 +52,8 @@ SELECT Dim_Calendar.WeekDayName as [Weekday], Dim_Calendar.CalendarDate as [Date
 join dbo.Dim_Plant on Dim_Fact_Light.Su_Plant_ID = Dim_Plant.Su_Plant_ID
 join dbo.Dim_Calendar on Dim_Fact_Light.Su_Date_ID = Dim_Calendar.Su_Date_ID
 WHERE Dim_Calendar.CalendarDate > DATEADD(dd,-8, getdate()) AND Dim_Calendar.CalendarDate < getdate()
-group by Dim_Calendar.WeekDayName, Dim_Calendar.CalendarDate, Plant_ID, Device_ID, Plant_Name ;
+group by Dim_Calendar.WeekDayName, Dim_Calendar.CalendarDate, Plant_ID, Device_ID, Plant_Name
+order by Dim_Calendar.CalendarDate;
 
 
 SELECT [Weekday],[Date], Plant_ID, Device_ID, Plant_Name, Light FROM LightWeeklyAvgView ;
@@ -73,7 +75,8 @@ SELECT Dim_Calendar.WeekDayName as [Weekday], Dim_Calendar.CalendarDate as [Date
 join dbo.Dim_Plant on Dim_Fact_Tem.Su_Plant_ID = Dim_Plant.Su_Plant_ID
 join dbo.Dim_Calendar on Dim_Fact_Tem.Su_Date_ID = Dim_Calendar.Su_Date_ID
 WHERE Dim_Calendar.CalendarDate > DATEADD(dd,-8, getdate()) AND Dim_Calendar.CalendarDate < getdate()
-group by Dim_Calendar.WeekDayName, Dim_Calendar.CalendarDate, Plant_ID, Device_ID, Plant_Name ;
+group by Dim_Calendar.WeekDayName, Dim_Calendar.CalendarDate, Plant_ID, Device_ID, Plant_Name
+order by Dim_Calendar.CalendarDate;
 
 
 SELECT [Weekday],[Date], Plant_ID, Device_ID, Plant_Name, Temperature FROM [TemWeeklyAvgView] ;
