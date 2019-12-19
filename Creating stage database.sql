@@ -175,7 +175,7 @@ select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users
        ,PlantData.Sensor_Value,
 													case 
 													when Sensor_Value < CO2_Min then 1
-													when Sensor_Value > CO2_Min and Sensor_Value < CO2_Max then 2
+													when Sensor_Value >= CO2_Min and Sensor_Value <= CO2_Max then 2
                                                     when Sensor_Value > CO2_Max then 3
 										            end as CO2_Status   
 
@@ -215,7 +215,7 @@ select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users
        ,PlantData.Sensor_Value,
        case
 													when Sensor_Value < Hum_Min then 1
-													when Sensor_Value > Hum_Min and Sensor_Value < Hum_Max then 2
+													when Sensor_Value >= Hum_Min and Sensor_Value <= Hum_Max then 2
                                                     when Sensor_Value > Hum_Max then 3
 										            end as Hum_Status  
 
@@ -253,7 +253,7 @@ select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users
        ,FORMAT([TimeStamp],'HH:mm')
        ,PlantData.Sensor_Value,                                                    case
 													when Sensor_Value <Light_Min then 1
-													when Sensor_Value > Light_Min and Sensor_Value < Light_Max then 2
+													when Sensor_Value >= Light_Min and Sensor_Value <= Light_Max then 2
                                                     when Sensor_Value > Light_Max then 3
 										            end as Light_Status
 
@@ -292,7 +292,7 @@ select Plant.Plant_ID, PlantProfile.Profile_ID, CAST([TimeStamp] AS DATE), Users
        ,FORMAT([TimeStamp],'HH:mm')
        ,PlantData.Sensor_Value,												    case
 													when Sensor_Value < Tem_Min then 1
-													when Sensor_Value > Tem_Min and Sensor_Value < Tem_Max then 2
+													when Sensor_Value >= Tem_Min and Sensor_Value <= Tem_Max then 2
                                                     when Sensor_Value > Tem_Max then 3
 										            end as Tem_Status
 
