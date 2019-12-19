@@ -76,7 +76,7 @@ CREATE TABLE dbo.Dim_PlantProfile(
 -- loading data from the staging area to the warehouse
 
 insert into Dim_PlantProfile (Profile_ID, Profile_Name)
-select Profile_ID, Profile_Name, CO2_Max, CO2_Min, Hum_Max, Hum_Min, Tem_Max, Tem_Min, Light_Max, Light_Min
+select Profile_ID, Profile_Name
 from Stage_SEP4_PMI.dbo.stage_dim_PlantProfile;
 
 select * from Dim_PlantProfile;
