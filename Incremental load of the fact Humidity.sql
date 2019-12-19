@@ -34,7 +34,7 @@ from SEP4_PMI.dbo.Plant
 join SEP4_PMI.dbo.PlantProfile on SEP4_PMI.dbo.Plant.Profile_ID = SEP4_PMI.dbo.PlantProfile.Profile_ID
 join SEP4_PMI.dbo.PlantData on PlantData.Plant_ID = Plant.Plant_ID
 join SEP4_PMI.dbo.Users on PlantProfile.[User_ID] = Users.[User_ID]
-where PlantData.Sensor_Type = 'Hum'
+where PlantData.Sensor_Type = 'Humidity'
 AND CAST(PlantData.TimeStamp AS DATETIME) > (select last_updated from Dim_SEP4_PMI.dbo.Last_Updated);
 
 select * from Temp_Fact_Hum;
